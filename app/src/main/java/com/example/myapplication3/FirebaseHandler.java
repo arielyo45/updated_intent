@@ -1,9 +1,17 @@
 package com.example.myapplication3;
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -31,35 +39,25 @@ public class FirebaseHandler {
                 @Override
                 public void onSuccess(AuthResult authResult) {
                     Toast.makeText(context, "you are genius+", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(context, TheHub.class);
+                        context.startActivity(intent);
                 }
             });
         }
     }
     public void SignUp(String sEmail, String sPassword) {
-        if (TextUtils.isEmpty(sEmail) || TextUtils.isEmpty(sPassword)) {
-            Toast.makeText(context, "You are missing details", Toast.LENGTH_SHORT).show();
-        } else {
-            // Create user in Firebase Authentication
-            auth.createUserWithEmailAndPassword(sEmail, sPassword)
-                    .addOnSuccessListener(authResult -> {
-                        // After successful registration, update the Firebase Realtime Database with user info
-                        String userId = authResult.getUser().getUid();  // Get the unique ID of the newly created user
+        auth.createUserWithEmailAndPassword(sEmail, sPassword)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(context, "success! ", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "failed ", Toast.LENGTH_SHORT).show();
 
-                        // Create a map to store user information in the database
-                        Map<String, Object> userInfo = new HashMap<>();
-                        userInfo.put("email", sEmail);  // Store the email
-                        userInfo.put("password", sPassword);  // Optional: you can choose to not store password for security reasons
 
-                        // Add user info to Firebase Realtime Database under a "users" node
-                        myRef.child("users").child(userId).setValue(userInfo)
-                                .addOnSuccessListener(aVoid ->
-                                        Toast.makeText(context, "Registration Successful and Database Updated!", Toast.LENGTH_SHORT).show())
-                                .addOnFailureListener(e ->
-                                        Toast.makeText(context, "Failed to Update Database: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                    })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(context, "Registration Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-
-        }
+                        }
+                    }
+                });
     }
 }

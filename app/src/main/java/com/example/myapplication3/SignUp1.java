@@ -1,5 +1,6 @@
 package com.example.myapplication3;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,9 +15,12 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.myapplication3.FirebaseHandler;
 import com.example.myapplication3.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUp1 extends AppCompatActivity {
 
+    private FirebaseAuth mAuth;
     private Button button;
     private EditText email;
     private EditText password;
@@ -26,24 +30,28 @@ public class SignUp1 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign_up1);
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseHandler f = new FirebaseHandler(auth,this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        Intent intent = getIntent();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
 
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseHandler f = new FirebaseHandler(auth,this);
+        mAuth = FirebaseAuth.getInstance();
         email = findViewById(R.id.email);
         password = findViewById(R.id.password1);
         button = findViewById(R.id.buttonr);
 
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String sEmailRegister = email.getText().toString().trim();
-                String sPasswordRegister = password.getText().toString().trim();
-                f.SignUp(sEmailRegister,sPasswordRegister);
+                String sEmail = email.getText().toString().trim();
+                String sPassword = password.getText().toString().trim();
+                f.SignUp(sEmail,sPassword);
             }
         });
         

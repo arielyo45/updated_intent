@@ -15,14 +15,14 @@
         android:autofillHints=""
         android:ems="10"
         android:inputType="text"
-        android:text="email"
-        app:layout_constraintBottom_toTopOf="@+id/email"
+        android:hint="email"
+        app:layout_constraintBottom_toTopOf="@+id/password1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.452"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.848"
-        tools:ignore="NotSibling,TextFields" />
+        app:layout_constraintVertical_bias="0.176"
+        tools:ignore="LabelFor,NotSibling,TextFields" />
 
     <EditText
         android:id="@+id/password1"
@@ -31,13 +31,13 @@
         android:autofillHints=""
         android:ems="10"
         android:inputType="text"
-        android:text="password"
+        android:hint="password"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.392"
+        app:layout_constraintVertical_bias="0.354"
         tools:ignore="TextFields" />
 
     <Button
@@ -45,10 +45,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="45dp"
-        android:text="Button"
+        android:hint="SignUp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.537" />
+        app:layout_constraintVertical_bias="0.484" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
