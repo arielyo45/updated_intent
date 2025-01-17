@@ -13,6 +13,9 @@
         android:theme="@style/Theme.MyApplication3"
         tools:targetApi="31">
         <activity
+            android:name=".FirstTimeLogin"
+            android:exported="false" />
+        <activity
             android:name=".TheHub"
             android:exported="false" />
         <activity

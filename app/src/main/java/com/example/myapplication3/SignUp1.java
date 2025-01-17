@@ -54,7 +54,12 @@ public class SignUp1 extends AppCompatActivity {
                 f.SignUp(sEmail,sPassword);
             }
         });
+    }
+    public void onClick(View v) {
+        Intent intent = new Intent(getApplicationContext(), FirstTimeLogin.class);
+        startActivity(intent);}
+}
         
 
-    }
-}
+
+

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <resources>
+    <style name="ButtonGreenStyle" parent="Widget.AppCompat.Button.Colored">
+        <!-- Button background tint -->
+        <item name="android:backgroundTint">@color/green</item> <!-- Solid green color -->
+
+        <!-- Button text color -->
+        <item name="android:textColor">@android:color/white</item> <!-- White text color -->
+
+        <!-- Text size -->
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+
+        <!-- Elevation for shadow effect -->
+        <item name="android:elevation">2dp</item>
+    </style>
+    </resources>
