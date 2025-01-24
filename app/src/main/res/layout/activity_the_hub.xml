@@ -7,6 +7,60 @@
     android:layout_height="match_parent"
     tools:context=".TheHub">
 
+    <Button
+        style="@style/ButtonGreenStyle"
+        android:layout_width="151dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="45dp"
+        android:backgroundTint="@color/green"
+        android:text="Weight"
+        android:textColorHighlight="#8BC34A"
+        android:textColorHint="#8BC34A"
+        android:textColorLink="#4CAF50"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.823"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.247" />
+
+    <Button
+        style="@style/ButtonGreenStyle"
+        android:layout_width="151dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="45dp"
+        android:backgroundTint="@color/green"
+        android:text="Workouts"
+        android:textColorHighlight="#8BC34A"
+        android:textColorHint="#8BC34A"
+        android:textColorLink="#4CAF50"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.823"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.382" />
+
+    <Button
+        style="@style/ButtonGreenStyle"
+        android:layout_width="151dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="45dp"
+        android:backgroundTint="@color/green"
+        android:text="Weight"
+        android:textColorHighlight="#8BC34A"
+        android:textColorHint="#8BC34A"
+        android:textColorLink="#4CAF50"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.165"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.247" />
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="202dp"
@@ -15,41 +69,39 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.447"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.093" />
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="232dp"
+        android:layout_width="409dp"
         android:layout_height="47dp"
         android:text="Click the following buttons for tracking your health"
         android:textSize="18sp"
-        tools:layout_editor_absoluteX="79dp"
-        tools:layout_editor_absoluteY="113dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.153" />
 
     <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="sleep"
-        tools:layout_editor_absoluteX="46dp"
-        tools:layout_editor_absoluteY="226dp" />
+        style="@style/ButtonGreenStyle"
+        android:layout_width="151dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="45dp"
+        android:backgroundTint="@color/green"
+        android:text="Sleep"
+        android:textColorHighlight="#8BC34A"
+        android:textColorHint="#8BC34A"
+        android:textColorLink="#4CAF50"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.165"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.382" />
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="weight"
-        tools:layout_editor_absoluteX="241dp"
-        tools:layout_editor_absoluteY="226dp" />
-
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="workout"
-        tools:layout_editor_absoluteX="137dp"
-        tools:layout_editor_absoluteY="323dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

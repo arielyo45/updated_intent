@@ -25,6 +25,8 @@ public class FirebaseHandler {
     private static DatabaseReference myRef = database.getReference();
     private static FirebaseAuth auth;
     private static Context context;
+    private static DatabaseReference   mDatabase = FirebaseDatabase.getInstance().getReference();;
+
 
     public FirebaseHandler(FirebaseAuth auth,Context context )  {
         FirebaseHandler.auth =auth;
@@ -60,4 +62,34 @@ public class FirebaseHandler {
                     }
                 });
     }
-}
+    public static void saveFirstTimeUser(int height, int workouts, int weight, boolean gender) {
+        String userId = mDatabase.child("users").push().getKey(); // Generate unique user ID
+        if (userId == null) {
+            Toast.makeText(context, "Error: Unable to generate user ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        User user = new User(weight, height, workouts, gender);
+        mDatabase.child("users").child(userId).setValue(user)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "Data saved successfully!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, TheHub.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                })
+                .addOnFailureListener(e -> Toast.makeText(context, "Failed to save data: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+    public static class User {
+        public int weight;
+        public int height;
+        public int workoutFrequency;
+        public String gender;
+
+        public User(int weight, int height, int workoutFrequency, boolean gender) {
+            this.weight = weight;
+            this.height = height;
+            this.workoutFrequency = workoutFrequency;
+            if (gender) this.gender = "Male";
+            else this.gender = "Female";
+        }
+}}

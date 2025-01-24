@@ -1,6 +1,5 @@
 package com.example.myapplication3;
 
-import static com.google.firebase.database.core.operation.OperationSource.Source.User;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,13 +25,14 @@ private int height;
 private int weight;
 private int workouts;
 private boolean gender;
-    private DatabaseReference mDatabase;
+    private String sex;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_time_login);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+
 
 
         EditText weightEditText = findViewById(R.id.editTextText3);
@@ -43,6 +43,7 @@ private boolean gender;
         Button submitButton = findViewById(R.id.button5);
 
         submitButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 try {
@@ -64,43 +65,22 @@ private boolean gender;
                     return;
                 }
 
-                String sex = gender  ? "Male" : "Female";
+
                 Toast.makeText(
                         FirstTimeLogin.this,
                         "Weight: " + weight + " kg\nHeight: " + height + " cm\nWorkouts/Week: " + workouts + "\nGender: " + gender,
                         Toast.LENGTH_LONG
                 ).show();
+
+                FirebaseHandler.saveFirstTimeUser(height, workouts, weight, gender);
+
             }
-            User user = new User(weight, height, workouts, isMale);
-
-            // Push the data to Firebase Database
-                mDatabase.child("users").push().setValue(user)
-                        .addOnSuccessListener(aVoid -> {
-                Toast.makeText(FirstTimeLogin.this, "Data saved to Firebase!", Toast.LENGTH_SHORT).show();
-            })
-                    .addOnFailureListener(e -> {
-                Toast.makeText(FirstTimeLogin.this, "Failed to save data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            });
-
-
         });
-
-
     }
 
-    public void onClick(View v) {
-        Intent intent = new Intent(getApplicationContext(), TheHub.class);
-        startActivity(intent);}
-    public static class User {
-        public int weight;
-        public int height;
-        public int workoutFrequency;
-        public String gender;
 
-        public User(int weight, int height, int workoutFrequency, boolean gender) {
-            this.weight = weight;
-            this.height = height;
-            this.workoutFrequency = workoutFrequency;
-            this.gender = gender;
-        }
+
+
+
+
 }
