@@ -21,10 +21,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.auth.User;
 
 public class FirstTimeLogin extends AppCompatActivity {
-private int height;
-private int weight;
-private int workouts;
-private boolean gender;
+    private int height;
+    private int weight;
+    private int workouts;
+    private boolean gender;
     private String sex;
 
 
@@ -32,7 +32,6 @@ private boolean gender;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_time_login);
-
 
 
         EditText weightEditText = findViewById(R.id.editTextText3);
@@ -43,7 +42,6 @@ private boolean gender;
         Button submitButton = findViewById(R.id.button5);
 
         submitButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 try {
@@ -66,21 +64,56 @@ private boolean gender;
                 }
 
 
-                Toast.makeText(
-                        FirstTimeLogin.this,
-                        "Weight: " + weight + " kg\nHeight: " + height + " cm\nWorkouts/Week: " + workouts + "\nGender: " + gender,
-                        Toast.LENGTH_LONG
-                ).show();
+                if(workouts<10&&workouts>=0){
+                if (weight < 140 && weight > 40) {
+                    if (height > 120 && height < 230) {
 
-                FirebaseHandler.saveFirstTimeUser(height, workouts, weight, gender);
+
+                            Toast.makeText(
+                                    FirstTimeLogin.this,
+                                    "Weight: " + weight + " kg\nHeight: " + height + " cm\nWorkouts/Week: " + workouts + "\nGender: " + gender,
+                                    Toast.LENGTH_LONG
+                            ).show();
+                            FirebaseHandler.saveFirstTimeUser(height, workouts, weight, gender);
+
+                    }
+                    else {
+                        Toast.makeText(
+                                FirstTimeLogin.this,
+                                "please use correct information",
+                                Toast.LENGTH_LONG
+                        ).show();
+                    }
+                    }
+                else {
+                    Toast.makeText(
+                            FirstTimeLogin.this,
+                            "please use correct information",
+                            Toast.LENGTH_LONG
+                    ).show();
+                }
+                }
+                else {
+                    Toast.makeText(
+                            FirstTimeLogin.this,
+                            "please use correct information",
+                            Toast.LENGTH_LONG
+                        ).show();
+                }
+
+
+
+
 
             }
         });
     }
-
-
-
-
-
-
 }
+
+
+
+
+
+
+
+

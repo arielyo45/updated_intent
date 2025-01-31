@@ -4,13 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
+    android:background="@drawable/clean2"
     android:layout_height="match_parent"
     tools:context=".TheHub">
 
     <Button
+        android:id="@+id/button8"
         style="@style/ButtonGreenStyle"
-        android:layout_width="151dp"
-        android:layout_height="43dp"
+        android:layout_width="176dp"
+        android:layout_height="67dp"
+        android:text="Search Friends"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.93"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.888" />
+
+    <Button
+        style="@style/ButtonGreenStyle"
+        android:layout_width="183dp"
+        android:layout_height="65dp"
         android:layout_marginTop="45dp"
         android:backgroundTint="@color/green"
         android:text="Weight"
@@ -20,15 +35,16 @@
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.823"
+        app:layout_constraintHorizontal_bias="0.453"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.247" />
+        android:onClick="onClick"
+        app:layout_constraintVertical_bias="0.288" />
 
     <Button
         style="@style/ButtonGreenStyle"
-        android:layout_width="151dp"
-        android:layout_height="43dp"
+        android:layout_width="185dp"
+        android:layout_height="68dp"
         android:layout_marginTop="45dp"
         android:backgroundTint="@color/green"
         android:text="Workouts"
@@ -38,58 +54,42 @@
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.823"
+        app:layout_constraintHorizontal_bias="0.946"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.382" />
-
-    <Button
-        style="@style/ButtonGreenStyle"
-        android:layout_width="151dp"
-        android:layout_height="43dp"
-        android:layout_marginTop="45dp"
-        android:backgroundTint="@color/green"
-        android:text="Weight"
-        android:textColorHighlight="#8BC34A"
-        android:textColorHint="#8BC34A"
-        android:textColorLink="#4CAF50"
-        android:textStyle="normal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.165"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.247" />
+        app:layout_constraintVertical_bias="0.444" />
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="202dp"
-        android:layout_height="32dp"
+        android:layout_width="268dp"
+        android:layout_height="111dp"
         android:text="       Welcome home"
-        android:textSize="18sp"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.093" />
+        app:layout_constraintVertical_bias="0.098" />
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="409dp"
-        android:layout_height="47dp"
+        android:layout_width="359dp"
+        android:layout_height="79dp"
+        android:gravity="center"
         android:text="Click the following buttons for tracking your health"
-        android:textSize="18sp"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.153" />
+        app:layout_constraintVertical_bias="0.164" />
 
     <Button
         style="@style/ButtonGreenStyle"
-        android:layout_width="151dp"
-        android:layout_height="43dp"
+        android:layout_width="169dp"
+        android:layout_height="62dp"
         android:layout_marginTop="45dp"
         android:backgroundTint="@color/green"
         android:text="Sleep"
@@ -99,9 +99,35 @@
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.165"
+        app:layout_constraintHorizontal_bias="0.111"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.382" />
+        app:layout_constraintVertical_bias="0.44" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="86dp"
+        android:layout_height="53dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.023"
+        app:srcCompat="@drawable/snakes" />
+
+    <Button
+        android:id="@+id/button78"
+        style="@style/ButtonGreenStyle"
+        android:layout_width="153dp"
+        android:layout_height="66dp"
+        android:text="Add Friends"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.097"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.888" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
