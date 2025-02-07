@@ -8,14 +8,18 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +39,7 @@ public class FirebaseHandler {
     }
     public void SignIn(String sEmail, String sPassword){
         if (TextUtils.isEmpty(sEmail) || TextUtils.isEmpty(sPassword)) {
-            Toast.makeText(context, "you are acoustic", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "type in the mail and password", Toast.LENGTH_SHORT).show();
         } else {
             auth.signInWithEmailAndPassword(sEmail, sPassword).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                 @Override
@@ -63,7 +67,7 @@ public class FirebaseHandler {
                 });
     }
     public static void saveFirstTimeUser(int height, int workouts, int weight, boolean gender) {
-        String userId = mDatabase.child("users").push().getKey(); // Generate unique user ID
+        String userId = mDatabase.child("users").push().getKey();
         if (userId == null) {
             Toast.makeText(context, "Error: Unable to generate user ID", Toast.LENGTH_SHORT).show();
             return;
@@ -79,7 +83,57 @@ public class FirebaseHandler {
                 })
                 .addOnFailureListener(e -> Toast.makeText(context, "Failed to save data: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
-    public static class User {
+    public static void getData(String userId, final Context context) {
+        DatabaseReference userRef = mDatabase.child("users").child(userId);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // Convert the snapshot into a User object
+                    User user = snapshot.getValue(User.class);
+                    if (user != null) {
+                        int weight = user.weight;
+                        int height = user.height;  // For example, height in centimeters.
+
+                        // Calculate BMI (if height is in centimeters, convert to meters)
+                        double heightInMeters = height / 100.0;
+                        double bmi = weight / (heightInMeters * heightInMeters);
+
+                        String tip;
+                        if (bmi < 18.5) {
+                            tip = "You might consider bulking up.";
+                        } else if (bmi < 25) {
+                            tip = "You're at a healthy weight.";
+                        } else {
+                            tip = "You might consider losing some weight.";
+                        }
+
+                        String message = "Weight: " + weight +
+                                "\nHeight: " + height +
+                                "\nBMI: " + String.format("%.2f", bmi) +
+                                "\nTip: " + tip;
+
+                        new AlertDialog.Builder(context)
+                                .setTitle("User Data")
+                                .setMessage(message)
+                                .setPositiveButton("OK", null)
+                                .show();
+                    } else {
+                        Toast.makeText(context, "User data is null.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(context, "User not found.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+            public static class User {
         public int weight;
         public int height;
         public int workoutFrequency;
@@ -93,3 +147,4 @@ public class FirebaseHandler {
             else this.gender = "Female";
         }
 }}
+
