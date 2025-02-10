@@ -1,94 +1,105 @@
 package com.example.myapplication3;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.activity.EdgeToEdge;
-import androidx.recyclerview.widget.AsyncListUtil;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class WeightTrack extends AppCompatActivity {
-    private Button button;
-    private int weight;
-    private int radio;
-    private Button bt;
-    private EditText weight2;
-    private RadioButton isBulk;
-    private RadioButton isLose;
-    private RadioButton isStay;
+
+    private Button btnShowBMI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_weight_track);
-        bt = findViewById(R.id.button2);
-        weight2 = findViewById(R.id.textView9);
-        isBulk = findViewById(R.id.radioButton3);
-        isLose = findViewById(R.id.radioButton2);
-        isStay = findViewById(R.id.radioButton);
 
+        btnShowBMI = findViewById(R.id.buttonShowBMI);
 
-        bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateWeightAndShowAlert();
-            }
-        });
+        // Button click event to show BMI
+        btnShowBMI.setOnClickListener(v -> showBMI());
     }
-    private void updateWeightAndShowAlert() {
 
-
-        try {
-            weight = Integer.parseInt(weight2.getText().toString().trim());
-        } catch (NumberFormatException e) {
-            Toast.makeText(WeightTrack.this, "Please enter a valid weight!", Toast.LENGTH_SHORT).show();
+    private void showBMI() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "User not logged in.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if(weight2 ==null) {
-            String currentUserId = FirebaseAuth.getInstance().getUid();;  // Replace with the actual user id (or use auth.getUid() if available)
+        String userId = user.getUid();
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
 
-            FirebaseHandler.getData(currentUserId, this);
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    int weight = snapshot.child("weight").getValue(Integer.class);
+                    int height = snapshot.child("height").getValue(Integer.class);
+                    double heightInMeters = height / 100.0;
+                    double bmi = weight / (heightInMeters * heightInMeters);
 
-                public void onDataReceived(FirebaseHandler.User user) {
-                    // You now have access to the user's data
-                    int weight = user.weight;
-                    int height = user.height;
+                    // Determine the selected goal
+                    String goal = getSelectedGoal();
 
-                    // For example, calculate BMI (assuming height is in meters and weight in kg)
-                    double bmi = weight / ( (height / 100.0) * (height / 100.0) ); // if height is stored in centimeters
-                    // If height is already in meters, then simply:
-                    // double bmi = weight / (height * height);
+                    String tip = getBMIBasedTip(bmi, goal);
 
-                    // Display the BMI and a tip based on your criteria
-                    String tip;
-                    // You might have radio button criteria in your UI; here we simply show the BMI.
-                    tip = "Your BMI is: " + String.format("%.2f", bmi);
-
-                    // For demonstration, show an AlertDialog with the data.
-                    new AlertDialog.Builder(WeightTrack.this)  // Replace YourActivity with the actual Activity name.
-                            .setTitle("User Data")
-                            .setMessage("Weight: " + weight + "\nHeight: " + height + "\n" + tip)
+                    new AlertDialog.Builder(WeightTrack.this)
+                            .setTitle("BMI Result")
+                            .setMessage("BMI: " + String.format("%.2f", bmi) + "\nTip: " + tip)
                             .setPositiveButton("OK", null)
                             .show();
                 }
+            }
 
-                @Override
-                public void onError(String errorMessage) {
-                    Toast.makeText(WeightTrack  .this, errorMessage, Toast.LENGTH_SHORT).show();
-                }
-        }
-
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(WeightTrack.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
+    private String getSelectedGoal() {
+        RadioButton radioLose = findViewById(R.id.radioButton2);
+        RadioButton radioStay = findViewById(R.id.radioButton);
+        RadioButton radioBulk = findViewById(R.id.radioButton3);
 
+        if (radioLose.isChecked()) {
+            return "Lose";
+        } else if (radioStay.isChecked()) {
+            return "Stay";
+        } else if (radioBulk.isChecked()) {
+            return "Bulk";
+        } else {
+            return "Unknown";
+        }
+    }
 
+    private String getBMIBasedTip(double bmi, String goal) {
+        if (goal.equals("Lose")) {
+            if (bmi > 25) return "Consider a calorie deficit and regular exercise.";
+            return "You're already in a good range!";
+        } else if (goal.equals("Bulk")) {
+            if (bmi < 18.5) return "Increase your calorie intake and strength training.";
+            return "You're at a good weight for now!";
+        } else { // Maintain weight
+            return "Stick to a balanced diet and regular activity!";
+        }
+    }
 }

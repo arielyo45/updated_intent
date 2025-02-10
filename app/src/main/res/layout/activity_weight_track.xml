@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/snow"
-    tools:context=".WeightTrack">
+    tools:context=".WeightTrackActivity">
 
     <TextView
         android:id="@+id/textView7"
@@ -30,13 +30,13 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintHorizontal_bias="0.619"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.641" />
+        app:layout_constraintVertical_bias="0.724" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/buttonShowBMI"
         android:layout_width="138dp"
         android:layout_height="71dp"
         android:text="Button"
@@ -45,10 +45,10 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.74" />
+        app:layout_constraintVertical_bias="0.845" />
 
     <EditText
-        android:id="@+id/textView9"
+        android:id="@+id/editTextWeight"
         android:layout_width="336dp"
         android:layout_height="91dp"
         android:hint="Type here your updated weight, keep it empty if i didnt change:"
@@ -66,10 +66,10 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintHorizontal_bias="0.553"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.531">
+        app:layout_constraintVertical_bias="0.636">
 
         <RadioButton
             android:id="@+id/radioButton2"
@@ -93,6 +93,7 @@
             android:layout_height="60dp"
             android:text="Bulk"
             android:textSize="17sp" />
+
     </RadioGroup>
 
     <TextView
@@ -101,11 +102,18 @@
         android:layout_height="48dp"
         android:text="Choose if you want to lose weight, stay or bulk up"
         android:textSize="16sp"
+        tools:layout_editor_absoluteX="35dp"
+        tools:layout_editor_absoluteY="371dp" />
+
+    <Button
+        android:id="@+id/buttonUpdateWeight"
+        android:layout_width="164dp"
+        android:layout_height="45dp"
+        android:text="Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.574"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.441" />
+        app:layout_constraintVertical_bias="0.452" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

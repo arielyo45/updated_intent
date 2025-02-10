@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:background="@drawable/clean2"
     android:layout_height="match_parent"
+    android:background="@drawable/clean2"
     tools:context=".TheHub">
 
     <Button
@@ -23,6 +23,7 @@
         app:layout_constraintVertical_bias="0.888" />
 
     <Button
+        android:id="@+id/button_weight"
         style="@style/ButtonGreenStyle"
         android:layout_width="183dp"
         android:layout_height="65dp"
@@ -38,10 +39,10 @@
         app:layout_constraintHorizontal_bias="0.453"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:onClick="onClick"
         app:layout_constraintVertical_bias="0.288" />
 
     <Button
+        android:id="@+id/shilo"
         style="@style/ButtonGreenStyle"
         android:layout_width="185dp"
         android:layout_height="68dp"
