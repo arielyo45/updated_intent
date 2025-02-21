@@ -92,6 +92,7 @@ public class WeightTrack extends AppCompatActivity {
     }
 
     private String getBMIBasedTip(double bmi, String goal) {
+        goal = getSelectedGoal();
         if (goal.equals("Lose")) {
             if (bmi > 25) return "Consider a calorie deficit and regular exercise.";
             return "You're already in a good range!";
