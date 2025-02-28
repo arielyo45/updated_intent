@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -53,6 +54,8 @@ public class TrainingPlan extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_plan);
 
+
+
         sharedPreferences = getSharedPreferences("WorkoutPrefs", MODE_PRIVATE);
         List<WorkoutDay> days = Arrays.asList(
                 new WorkoutDay("Sunday", sharedPreferences.getString("Sunday", "")),
@@ -73,6 +76,15 @@ public class TrainingPlan extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         scheduleWeeklyReset();
+
+        Button resetButton = findViewById(R.id.resetButton);
+        resetButton.setOnClickListener(v -> {
+            for (WorkoutDay day : days) {
+                day.workout = "";
+            }
+            adapter.notifyDataSetChanged();
+            saveData(days);
+        });
     }
 
     private void saveData(List<WorkoutDay> days) {
@@ -129,7 +141,7 @@ class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_workout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_training_plan, parent, false);
         return new ViewHolder(view);
     }
 
