@@ -23,11 +23,19 @@ public class TheHub extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        W = findViewById(R.id.shilo);
+        W = findViewById(R.id.button_weight);
         W.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), WeightTrack.class);
+                startActivity(intent);
+            }
+        });
+        W = findViewById(R.id.shilo);
+        W.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), TrainingPlan.class);
                 startActivity(intent);
             }
         });

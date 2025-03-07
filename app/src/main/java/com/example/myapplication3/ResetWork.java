@@ -7,6 +7,7 @@ import androidx.work.ListenableWorker;
 import androidx.work.WorkerParameters;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 
 public class ResetWork extends ListenableWorker  {
 
@@ -15,17 +16,20 @@ public class ResetWork extends ListenableWorker  {
     }
 
     @NonNull
-    public ListenableFuture<Result> startWork() {
-        return null;
-    }
-
-    @NonNull
     @Override
-    public Result doWork() {
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("WorkoutPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.apply();
-        return Result.success();
+    public ListenableFuture<Result> startWork() {
+        SettableFuture<Result> future = SettableFuture.create();
+
+        try {
+            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("WorkoutPrefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.apply();
+            future.set(Result.success()); // Indicate success
+        } catch (Exception e) {
+            future.setException(e); // Indicate failure if an exception occurs
+        }
+
+        return future;
     }
 }

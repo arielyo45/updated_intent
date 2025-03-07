@@ -59,6 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void onClick(View v) {
-        Intent intent = new Intent(getApplicationContext(), SignUp1.class);
+        Intent intent = new Intent(getApplicationContext(), TheHub.class);
         startActivity(intent);}
 }

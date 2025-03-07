@@ -26,6 +26,7 @@ import androidx.work.WorkerParameters;
 import com.example.myapplication3.R;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -37,12 +38,11 @@ public class TrainingPlan extends AppCompatActivity {
     private RecyclerView recyclerView;
     private WorkoutAdapter adapter;
     private SharedPreferences sharedPreferences;
+    private boolean alertShown = false;
 
-    // Data Model inside the Activity
     public static class WorkoutDay {
         String day;
         String workout;
-
         public WorkoutDay(String day, String workout) {
             this.day = day;
             this.workout = workout;
@@ -54,9 +54,9 @@ public class TrainingPlan extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_plan);
 
-
-
         sharedPreferences = getSharedPreferences("WorkoutPrefs", MODE_PRIVATE);
+        checkForWeeklyReset();
+
         List<WorkoutDay> days = Arrays.asList(
                 new WorkoutDay("Sunday", sharedPreferences.getString("Sunday", "")),
                 new WorkoutDay("Monday", sharedPreferences.getString("Monday", "")),
@@ -74,8 +74,6 @@ public class TrainingPlan extends AppCompatActivity {
             checkForRestDaySuggestion(days);
         });
         recyclerView.setAdapter(adapter);
-
-        scheduleWeeklyReset();
 
         Button resetButton = findViewById(R.id.resetButton);
         resetButton.setOnClickListener(v -> {
@@ -96,27 +94,45 @@ public class TrainingPlan extends AppCompatActivity {
     }
 
     private void checkForRestDaySuggestion(List<WorkoutDay> days) {
+        if (alertShown) return;
+
         boolean allFilled = true;
-        for (WorkoutDay day  : days) {
+        for (WorkoutDay day : days) {
             if (day.workout.isEmpty()) {
                 allFilled = false;
                 break;
             }
         }
         if (allFilled) {
+            alertShown = true;
             new AlertDialog.Builder(this)
                     .setTitle("Rest Day Suggestion")
                     .setMessage("You've scheduled workouts every day! Consider adding rest days.")
-                    .setPositiveButton("OK", null)
+                    .setPositiveButton("OK", (dialog, which) -> alertShown = false)
                     .show();
         }
     }
 
-    private void scheduleWeeklyReset() {
-        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(ResetWork.class, 7, TimeUnit.DAYS).build();
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork("resetWork", ExistingPeriodicWorkPolicy.KEEP, workRequest);
+    private void checkForWeeklyReset() {
+        long lastReset = sharedPreferences.getLong("lastReset", 0);
+        long currentTime = System.currentTimeMillis();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(lastReset);
+        int lastWeek = calendar.get(Calendar.WEEK_OF_YEAR);
+
+        calendar.setTimeInMillis(currentTime);
+        int currentWeek = calendar.get(Calendar.WEEK_OF_YEAR);
+
+        if (lastWeek != currentWeek) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.putLong("lastReset", currentTime);
+            editor.apply();
+        }
     }
 }
+
 
 // RecyclerView Adapter
 class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.ViewHolder> {
@@ -131,17 +147,18 @@ class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.ViewHolder> {
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView dayText;
         EditText workoutInput;
+        TextWatcher textWatcher;
 
         ViewHolder(View view) {
             super(view);
-            dayText = view.findViewById(R.id.titleText);
+            dayText = view.findViewById(R.id.dayText);
             workoutInput = view.findViewById(R.id.workoutInput);
         }
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_training_plan, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_workout_day, parent, false);
         return new ViewHolder(view);
     }
 
@@ -151,7 +168,12 @@ class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.ViewHolder> {
         holder.dayText.setText(item.day);
         holder.workoutInput.setText(item.workout);
 
-        holder.workoutInput.addTextChangedListener(new TextWatcher() {
+        // Remove previous TextWatcher to prevent multiple listeners
+        if (holder.textWatcher != null) {
+            holder.workoutInput.removeTextChangedListener(holder.textWatcher);
+        }
+
+        holder.textWatcher = new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
                 item.workout = s.toString();
@@ -161,7 +183,9 @@ class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.ViewHolder> {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        });
+        };
+
+        holder.workoutInput.addTextChangedListener(holder.textWatcher);
     }
 
     @Override
