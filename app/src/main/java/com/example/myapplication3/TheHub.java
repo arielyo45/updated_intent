@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class TheHub extends AppCompatActivity {
     Button W;
+    Button WW;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,8 +32,8 @@ public class TheHub extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        W = findViewById(R.id.shilo);
-        W.setOnClickListener(new View.OnClickListener() {
+        WW = findViewById(R.id.shilo);
+        WW.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), TrainingPlan.class);

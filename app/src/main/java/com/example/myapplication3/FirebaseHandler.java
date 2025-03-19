@@ -4,6 +4,7 @@ import static androidx.core.content.ContextCompat.startActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -53,16 +54,22 @@ public class FirebaseHandler {
         }
     }
     public void SignUp(String sEmail, String sPassword) {
+        if (sEmail.isEmpty() || sPassword.isEmpty()) {
+            Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         auth.createUserWithEmailAndPassword(sEmail, sPassword)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(context, "success! ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Success!", Toast.LENGTH_SHORT).show();
+
                         } else {
-                            Toast.makeText(context, "failed ", Toast.LENGTH_SHORT).show();
-
-
+                            String errorMessage = task.getException().getMessage();
+                            Toast.makeText(context, "Failed: " + errorMessage, Toast.LENGTH_LONG).show();
+                            Log.e("FirebaseAuth", "SignUp Error: " + errorMessage);
                         }
                     }
                 });
@@ -110,9 +117,7 @@ public class FirebaseHandler {
                     User user = snapshot.getValue(User.class);
                     if (user != null) {
                         int weight = user.weight;
-                        int height = user.height;  // For example, height in centimeters.
-
-                        // Calculate BMI (if height is in centimeters, convert to meters)
+                        int height = user.height;
                         double heightInMeters = height / 100.0;
                         double bmi = weight / (heightInMeters * heightInMeters);
 

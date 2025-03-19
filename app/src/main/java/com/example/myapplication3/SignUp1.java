@@ -55,8 +55,8 @@ public class SignUp1 extends AppCompatActivity {
             }
         });
     }
-    public void onClick(View v) {
-        Intent intent = new Intent(getApplicationContext(), FirstTimeLogin.class);
+    public void onClick1(View v) {
+        Intent intent = new Intent(SignUp1.this, FirstTimeLogin.class);
         startActivity(intent);}
 }
         

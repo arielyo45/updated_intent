@@ -32,17 +32,12 @@ public class WeightTrack extends AppCompatActivity {
 
         btnShowBMI = findViewById(R.id.buttonShowBMI);
 
-        // Button click event to show BMI
+
         btnShowBMI.setOnClickListener(v -> showBMI());
     }
 
     private void showBMI() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            Toast.makeText(this, "User not logged in.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         String userId = user.getUid();
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
 

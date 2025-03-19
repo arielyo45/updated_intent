@@ -25,9 +25,9 @@ public class ResetWork extends ListenableWorker  {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.clear();
             editor.apply();
-            future.set(Result.success()); // Indicate success
+            future.set(Result.success());
         } catch (Exception e) {
-            future.setException(e); // Indicate failure if an exception occurs
+            future.setException(e);
         }
 
         return future;
