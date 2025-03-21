@@ -2,17 +2,15 @@ package com.example.myapplication3;
 
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.example.myapplication3.FirebaseHandler;
+import com.example.myapplication3.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,7 +21,8 @@ import com.google.firebase.database.ValueEventListener;
 
 public class WeightTrack extends AppCompatActivity {
 
-    private Button btnShowBMI;
+    private Button btnShowBMI, btnUpdateWeight;
+    private EditText editTextWeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +30,30 @@ public class WeightTrack extends AppCompatActivity {
         setContentView(R.layout.activity_weight_track);
 
         btnShowBMI = findViewById(R.id.buttonShowBMI);
+        btnUpdateWeight = findViewById(R.id.buttonUpdateWeight);
+        editTextWeight = findViewById(R.id.editTextWeight);
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Toast.makeText(this,"use: " + user.getUid(), Toast.LENGTH_SHORT).show();
+        if (user != null) {
+
+            FirebaseHandler.getData(user.getUid(), this);
+        }
+        else {
+            Toast.makeText(this, "User not logged in.", Toast.LENGTH_SHORT).show();
+        }
 
         btnShowBMI.setOnClickListener(v -> showBMI());
+        btnUpdateWeight.setOnClickListener(v -> updateUserWeight());
     }
 
     private void showBMI() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "User not logged in.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String userId = user.getUid();
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
 
@@ -50,9 +66,7 @@ public class WeightTrack extends AppCompatActivity {
                     double heightInMeters = height / 100.0;
                     double bmi = weight / (heightInMeters * heightInMeters);
 
-                    // Determine the selected goal
                     String goal = getSelectedGoal();
-
                     String tip = getBMIBasedTip(bmi, goal);
 
                     new AlertDialog.Builder(WeightTrack.this)
@@ -68,6 +82,17 @@ public class WeightTrack extends AppCompatActivity {
                 Toast.makeText(WeightTrack.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void updateUserWeight() {
+        String weightStr = editTextWeight.getText().toString().trim();
+        if (weightStr.isEmpty()) {
+            Toast.makeText(this, "Enter a weight to update.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int newWeight = Integer.parseInt(weightStr);
+        FirebaseHandler.updateWeight(this, newWeight);
     }
 
     private String getSelectedGoal() {
@@ -87,14 +112,11 @@ public class WeightTrack extends AppCompatActivity {
     }
 
     private String getBMIBasedTip(double bmi, String goal) {
-        goal = getSelectedGoal();
         if (goal.equals("Lose")) {
-            if (bmi > 25) return "Consider a calorie deficit and regular exercise.";
-            return "You're already in a good range!";
+            return (bmi > 25) ? "Consider a calorie deficit and regular exercise." : "You're already in a good range!";
         } else if (goal.equals("Bulk")) {
-            if (bmi < 18.5) return "Increase your calorie intake and strength training.";
-            return "You're at a good weight for now!";
-        } else { // Maintain weight
+            return (bmi < 18.5) ? "Increase your calorie intake and strength training." : "You're at a good weight for now!";
+        } else {
             return "Stick to a balanced diet and regular activity!";
         }
     }

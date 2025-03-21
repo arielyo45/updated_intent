@@ -1,11 +1,9 @@
 package com.example.myapplication3;
-import static androidx.core.content.ContextCompat.startActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,9 +20,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class FirebaseHandler {
     private static FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -65,6 +60,8 @@ public class FirebaseHandler {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(context, "Success!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(context, FirstTimeLogin.class);
+                            context.startActivity(intent);
 
                         } else {
                             String errorMessage = task.getException().getMessage();
@@ -75,14 +72,16 @@ public class FirebaseHandler {
                 });
     }
     public static void saveFirstTimeUser(int height, int workouts, int weight, boolean gender) {
-        String userId = mDatabase.child("users").push().getKey();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        String userId = user.getUid();
         if (userId == null) {
             Toast.makeText(context, "Error: Unable to generate user ID", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        User user = new User(weight, height, workouts, gender);
-        mDatabase.child("users").child(userId).setValue(user)
+        User account = new User(weight, height, workouts, gender);
+        mDatabase.child("users").child(userId).setValue(account)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "Data saved successfully!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, TheHub.class);
@@ -91,7 +90,7 @@ public class FirebaseHandler {
                 })
                 .addOnFailureListener(e -> Toast.makeText(context, "Failed to save data: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
-    public static void updateWeight(int newWeight) {
+    public static void updateWeight(WeightTrack weightTrack, int newWeight) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             Toast.makeText(context, "User not logged in.", Toast.LENGTH_SHORT).show();
@@ -159,6 +158,8 @@ public class FirebaseHandler {
         public int height;
         public int workoutFrequency;
         public String gender;
+                public User() {
+                }
 
         public User(int weight, int height, int workoutFrequency, boolean gender) {
             this.weight = weight;

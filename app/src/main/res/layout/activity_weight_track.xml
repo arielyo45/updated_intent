@@ -61,6 +61,7 @@
         app:layout_constraintVertical_bias="0.306" />
 
     <RadioGroup
+        android:id= "@+id/radioGroupGoals"
         android:layout_width="270dp"
         android:layout_height="73dp"
         android:orientation="horizontal"
