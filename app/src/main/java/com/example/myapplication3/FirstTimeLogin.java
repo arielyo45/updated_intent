@@ -24,6 +24,7 @@ public class FirstTimeLogin extends AppCompatActivity {
     private int height;
     private int weight;
     private int workouts;
+    private boolean flag = false;
     private boolean gender;
     private String sex;
 
@@ -68,7 +69,7 @@ public class FirstTimeLogin extends AppCompatActivity {
                 if (weight < 140 && weight > 40) {
                     if (height > 120 && height < 230) {
 
-
+                            flag =true;
                             Toast.makeText(
                                     FirstTimeLogin.this,
                                     "Weight: " + weight + " kg\nHeight: " + height + " cm\nWorkouts/Week: " + workouts + "\nGender: " + gender,
@@ -77,29 +78,19 @@ public class FirstTimeLogin extends AppCompatActivity {
                             FirebaseHandler.saveFirstTimeUser(height, workouts, weight, gender);
 
                     }
-                    else {
-                        Toast.makeText(
-                                FirstTimeLogin.this,
-                                "please use correct information",
-                                Toast.LENGTH_LONG
-                        ).show();
+
                     }
-                    }
-                else {
+
+                }
+                if (!flag)
+                {
                     Toast.makeText(
                             FirstTimeLogin.this,
                             "please use correct information",
                             Toast.LENGTH_LONG
                     ).show();
                 }
-                }
-                else {
-                    Toast.makeText(
-                            FirstTimeLogin.this,
-                            "please use correct information",
-                            Toast.LENGTH_LONG
-                        ).show();
-                }
+
 
 
 

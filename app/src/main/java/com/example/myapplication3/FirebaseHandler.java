@@ -21,8 +21,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class FirebaseHandler {
     private static FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference;
+
     private static DatabaseReference myRef = database.getReference();
     private static FirebaseAuth auth;
     private static Context context;
@@ -33,7 +39,14 @@ public class FirebaseHandler {
         FirebaseHandler.auth =auth;
         FirebaseHandler.context = context;
 
+
     }
+
+    public FirebaseHandler() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("TrainingPlans");
+
+    }
+
     public void SignIn(String sEmail, String sPassword){
         if (TextUtils.isEmpty(sEmail) || TextUtils.isEmpty(sPassword)) {
             Toast.makeText(context, "type in the mail and password", Toast.LENGTH_SHORT).show();
@@ -76,7 +89,7 @@ public class FirebaseHandler {
 
         String userId = user.getUid();
         if (userId == null) {
-            Toast.makeText(context, "Error: Unable to generate user ID", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Unable to generate user ID", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -151,9 +164,42 @@ public class FirebaseHandler {
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
+
         });
     }
-            public static class User {
+
+    public void saveTrainingPlan(String userId, Map<String, String> workoutData) {
+        databaseReference.child(userId).setValue(workoutData);
+    }
+
+    public void getTrainingPlan(String userId, FirebaseDataCallback callback) {
+        databaseReference.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Map<String, String> workouts = new HashMap<>();
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        workouts.put(child.getKey(), child.getValue(String.class));
+                    }
+                    callback.onDataReceived(workouts);
+                } else {
+                    callback.onDataReceived(null);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                callback.onError(error.toException());
+            }
+        });
+    }
+
+    public interface FirebaseDataCallback {
+        void onDataReceived(Map<String, String> workouts);
+        void onError(Exception e);
+    }
+
+    public static class User {
         public int weight;
         public int height;
         public int workoutFrequency;
