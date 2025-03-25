@@ -88,22 +88,23 @@
         app:layout_constraintVertical_bias="0.164" />
 
     <Button
+        android:id="@+id/Food12"
         style="@style/ButtonGreenStyle"
         android:layout_width="169dp"
         android:layout_height="62dp"
         android:layout_marginTop="45dp"
         android:backgroundTint="@color/green"
-        android:text="Sleep"
+        android:text="Food"
         android:textColorHighlight="#8BC34A"
         android:textColorHint="#8BC34A"
         android:textColorLink="#4CAF50"
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.111"
+        app:layout_constraintHorizontal_bias="0.152"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.44" />
+        app:layout_constraintVertical_bias="0.45" />
 
     <ImageView
         android:id="@+id/imageView2"

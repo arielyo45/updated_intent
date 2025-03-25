@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class TheHub extends AppCompatActivity {
     Button W;
     Button WW;
+    Button WWW;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +41,16 @@ public class TheHub extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        WWW = findViewById(R.id.Food12);
+        WWW.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), FoodTrack.class);
+                startActivity(intent);
+            }
+        });
     }
+
 
 }
 

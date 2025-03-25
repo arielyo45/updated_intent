@@ -34,7 +34,7 @@ public class WeightTrack extends AppCompatActivity {
         editTextWeight = findViewById(R.id.editTextWeight);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        Toast.makeText(this,"use: " + user.getUid(), Toast.LENGTH_SHORT).show();
+
         if (user != null) {
 
             FirebaseHandler.getData(user.getUid(), this);
