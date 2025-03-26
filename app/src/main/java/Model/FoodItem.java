@@ -1,8 +1,15 @@
 package Model;
 
-import java.util.List;
+import com.google.gson.annotations.SerializedName;
 
 public class FoodItem {
-    public String description;  // Description of the food item
-    public List<Nutrient> foodNutrients;  // A list of nutrients associated with this food
+    @SerializedName("food_name") public String foodName;
+
+    @SerializedName("nf_calories") public float calories;
+
+    @SerializedName("nf_total_fat")  public float totalFat;
+
+    @SerializedName("nf_total_carbohydrate") public float carbs;
+
+    @SerializedName("nf_protein") public float protein;
 }
