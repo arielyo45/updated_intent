@@ -48,13 +48,13 @@ public class FirebaseHandler {
     }
 
     public void SignIn(String sEmail, String sPassword){
-        if (TextUtils.isEmpty(sEmail) || TextUtils.isEmpty(sPassword)) {
+        if (sEmail.isEmpty() || sPassword.isEmpty()) {
             Toast.makeText(context, "type in the mail and password", Toast.LENGTH_SHORT).show();
         } else {
             auth.signInWithEmailAndPassword(sEmail, sPassword).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                 @Override
                 public void onSuccess(AuthResult authResult) {
-                    Toast.makeText(context, "you are genius+", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "You are Signed in", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(context, TheHub.class);
                         context.startActivity(intent);
                 }
@@ -72,14 +72,13 @@ public class FirebaseHandler {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(context, "Success!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Succesfully Signed Up!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(context, FirstTimeLogin.class);
                             context.startActivity(intent);
 
                         } else {
                             String errorMessage = task.getException().getMessage();
                             Toast.makeText(context, "Failed: " + errorMessage, Toast.LENGTH_LONG).show();
-                            Log.e("FirebaseAuth", "SignUp Error: " + errorMessage);
                         }
                     }
                 });
@@ -103,13 +102,8 @@ public class FirebaseHandler {
                 })
                 .addOnFailureListener(e -> Toast.makeText(context, "Failed to save data: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
-    public static void updateWeight(WeightTrack weightTrack, int newWeight) {
+    public static void updateWeight( int newWeight) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            Toast.makeText(context, "User not logged in.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         String userId = user.getUid();
         mDatabase.child("users").child(userId).child("weight").setValue(newWeight)
                 .addOnSuccessListener(aVoid ->

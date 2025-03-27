@@ -92,7 +92,7 @@ public class WeightTrack extends AppCompatActivity {
         }
 
         int newWeight = Integer.parseInt(weightStr);
-        FirebaseHandler.updateWeight(this, newWeight);
+        FirebaseHandler.updateWeight( newWeight);
     }
 
     private String getSelectedGoal() {

@@ -79,7 +79,6 @@ public class TrainingPlan extends AppCompatActivity {
         workoutFriday.addTextChangedListener(textWatcher);
         workoutSaturday.addTextChangedListener(textWatcher);
 
-        // Reset button
         resetButton.setOnClickListener(v -> {
             clearWorkouts();
             saveData();

@@ -20,7 +20,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUp1 extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
     private Button button;
     private EditText email;
     private EditText password;
@@ -35,12 +34,9 @@ public class SignUp1 extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        Intent intent = getIntent();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseHandler f = new FirebaseHandler(auth,this);
-        mAuth = FirebaseAuth.getInstance();
         email = findViewById(R.id.email);
         password = findViewById(R.id.password1);
         button = findViewById(R.id.buttonr);
