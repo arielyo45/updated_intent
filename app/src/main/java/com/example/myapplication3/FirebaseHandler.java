@@ -26,13 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 public class FirebaseHandler {
-    private static FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference;
-
-    private static DatabaseReference myRef = database.getReference();
     private static FirebaseAuth auth;
     private static Context context;
-    private static DatabaseReference   mDatabase = FirebaseDatabase.getInstance().getReference();;
+    private static final DatabaseReference   mDatabase = FirebaseDatabase.getInstance().getReference();;
 
 
     public FirebaseHandler(FirebaseAuth auth,Context context )  {
@@ -86,11 +83,8 @@ public class FirebaseHandler {
     public static void saveFirstTimeUser(int height, int workouts, int weight, boolean gender) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+        assert user != null;
         String userId = user.getUid();
-        if (userId == null) {
-            Toast.makeText(context, "Unable to generate user ID", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         User account = new User(weight, height, workouts, gender);
         mDatabase.child("users").child(userId).setValue(account)
@@ -104,6 +98,7 @@ public class FirebaseHandler {
     }
     public static void updateWeight( int newWeight) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        assert user != null;
         String userId = user.getUid();
         mDatabase.child("users").child(userId).child("weight").setValue(newWeight)
                 .addOnSuccessListener(aVoid ->

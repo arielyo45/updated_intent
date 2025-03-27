@@ -19,7 +19,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,11 +40,11 @@ public class TrainingPlan extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_plan);
 
-        showBMI();
+        showTip();
 
         training = new FirebaseHandler();
 
-        // Link UI elements
+
         workoutSunday = findViewById(R.id.workout_sunday);
         workoutMonday = findViewById(R.id.workout_monday);
         workoutTuesday = findViewById(R.id.workout_tuesday);
@@ -55,7 +54,7 @@ public class TrainingPlan extends AppCompatActivity {
         workoutSaturday = findViewById(R.id.workout_saturday);
         resetButton = findViewById(R.id.resetButton);
 
-        // Load saved workouts from Firebase
+        // Load workouts from Firebase
         loadData();
 
         // Save data on text change
@@ -104,7 +103,7 @@ public class TrainingPlan extends AppCompatActivity {
         training.getTrainingPlan(userId, new FirebaseHandler.FirebaseDataCallback() {
             @Override
             public void onDataReceived(Map<String, String> workouts) {
-                if (workouts != null) {
+
                     workoutSunday.setText(workouts.getOrDefault("Sunday", ""));
                     workoutMonday.setText(workouts.getOrDefault("Monday", ""));
                     workoutTuesday.setText(workouts.getOrDefault("Tuesday", ""));
@@ -112,7 +111,7 @@ public class TrainingPlan extends AppCompatActivity {
                     workoutThursday.setText(workouts.getOrDefault("Thursday", ""));
                     workoutFriday.setText(workouts.getOrDefault("Friday", ""));
                     workoutSaturday.setText(workouts.getOrDefault("Saturday", ""));
-                }
+
             }
 
             @Override
@@ -148,17 +147,12 @@ public class TrainingPlan extends AppCompatActivity {
             new AlertDialog.Builder(this)
                     .setTitle("Rest Day Suggestion")
                     .setMessage("You've scheduled workouts every day! Consider adding rest days.")
-                    .setPositiveButton("OK", (dialog, which) -> alertShown = false)
+                    .setPositiveButton("OK", (dialog, which) -> {})
                     .show();
         }
     }
-    private void showBMI() {
+    private void showTip() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            Toast.makeText(this, "User not logged in.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         String userId = user.getUid();
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
 

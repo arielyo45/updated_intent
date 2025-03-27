@@ -32,16 +32,8 @@ public class WeightTrack extends AppCompatActivity {
         btnShowBMI = findViewById(R.id.buttonShowBMI);
         btnUpdateWeight = findViewById(R.id.buttonUpdateWeight);
         editTextWeight = findViewById(R.id.editTextWeight);
-
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null) {
-
-            FirebaseHandler.getData(user.getUid(), this);
-        }
-        else {
-            Toast.makeText(this, "User not logged in.", Toast.LENGTH_SHORT).show();
-        }
+        FirebaseHandler.getData(user.getUid(), this);
 
         btnShowBMI.setOnClickListener(v -> showBMI());
         btnUpdateWeight.setOnClickListener(v -> updateUserWeight());
