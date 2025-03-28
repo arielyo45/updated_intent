@@ -1,12 +1,10 @@
 package com.example.myapplication3;
-import Model.FoodQuery;
-import Model.NutritionResponse;
+import FoodModel.FoodQuery;
+import FoodModel.NutritionResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
 
 
 // nutritionix

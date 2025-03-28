@@ -5,9 +5,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import Model.FoodItem;
-import Model.FoodQuery;
-import Model.NutritionResponse;
+import FoodModel.FoodItem;
+import FoodModel.FoodQuery;
+import FoodModel.NutritionResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
