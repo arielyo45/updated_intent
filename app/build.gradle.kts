@@ -36,8 +36,8 @@ android {
 dependencies {
 
     implementation(libs.appcompat)
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
@@ -47,6 +47,10 @@ dependencies {
     implementation(libs.work.runtime)
     implementation(libs.firebase.crashlytics.buildtools)
     implementation (libs.guava)
+    implementation (libs.okhttp)
+    implementation (libs.logging.interceptor)
+    implementation (libs.json)
+    implementation(libs.volley)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

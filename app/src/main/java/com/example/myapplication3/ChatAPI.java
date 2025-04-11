@@ -11,7 +11,7 @@ public interface ChatAPI {
 
     @Headers({
             "Content-Type: application/json",
-            "Authorization: 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"
+            "Authorization: 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"
     })
     @POST("v1/chat/completions")
     Call<ChatGptResponse> getChatResponse(@Body ChatGptRequest request);

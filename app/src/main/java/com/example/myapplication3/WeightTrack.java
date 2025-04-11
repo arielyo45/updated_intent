@@ -9,8 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.myapplication3.FirebaseHandler;
-import com.example.myapplication3.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -19,10 +17,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+
 public class WeightTrack extends AppCompatActivity {
 
     private Button btnShowBMI, btnUpdateWeight;
     private EditText editTextWeight;
+    private boolean isRequestRunning = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class WeightTrack extends AppCompatActivity {
     }
 
     private void showBMI() {
+        if (isRequestRunning) return;
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             Toast.makeText(this, "User not logged in.", Toast.LENGTH_SHORT).show();
@@ -52,21 +55,42 @@ public class WeightTrack extends AppCompatActivity {
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    int weight = snapshot.child("weight").getValue(Integer.class);
-                    int height = snapshot.child("height").getValue(Integer.class);
-                    double heightInMeters = height / 100.0;
-                    double bmi = weight / (heightInMeters * heightInMeters);
-
-                    String goal = getSelectedGoal();
-                    String tip = getBMIBasedTip(bmi, goal);
-
-                    new AlertDialog.Builder(WeightTrack.this)
-                            .setTitle("BMI Result")
-                            .setMessage("BMI: " + String.format("%.2f", bmi) + "\nTip: " + tip)
-                            .setPositiveButton("OK", null)
-                            .show();
+                if (!snapshot.exists()) {
+                    Toast.makeText(WeightTrack.this, "No user data found.", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                int weight = snapshot.child("weight").getValue(Integer.class);
+                int height = snapshot.child("height").getValue(Integer.class);
+                String gender = snapshot.child("gender").getValue(String.class);
+                String goal = getSelectedGoal();
+                int workouts = snapshot.child("workoutFrequency").getValue(Integer.class);
+
+                double heightM = height / 100.0;
+                double bmi = weight / (heightM * heightM);
+
+                String prompt = String.format(
+                        "I am using a health tracking app. My gender is %s, my height is %d cm and weight is %d kg. " +
+                                "I work out %d times per week. My goal is to %s weight. My BMI is %.2f. " +
+                                "Can you give me a practical tip based on this?",
+                        gender, height, weight, workouts, goal.toLowerCase(), bmi
+                );
+
+
+                    ChatCall.sendToChat(prompt, new ChatCall.OpenAICallback() {
+                        @Override
+                        public void onTipReceived(String tip) {
+                            isRequestRunning = false;
+                            showBMIResultDialog(bmi, tip);
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            isRequestRunning = false;
+                            Toast.makeText(WeightTrack.this, "Error: " + error, Toast.LENGTH_LONG).show();
+                        }
+                    });
+
             }
 
             @Override
@@ -75,6 +99,14 @@ public class WeightTrack extends AppCompatActivity {
             }
         });
     }
+    private void showBMIResultDialog(double bmi, String tip) {
+        new AlertDialog.Builder(WeightTrack.this)
+                .setTitle("BMI Result")
+                .setMessage("BMI: " + String.format("%.2f", bmi) + "\nTip: " + tip)
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
 
     private void updateUserWeight() {
         String weightStr = editTextWeight.getText().toString().trim();

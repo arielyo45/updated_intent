@@ -2,8 +2,6 @@ package com.example.myapplication3;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,9 +18,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class FirebaseHandler {
@@ -30,7 +29,41 @@ public class FirebaseHandler {
     private static FirebaseAuth auth;
     private static Context context;
     private static final DatabaseReference   mDatabase = FirebaseDatabase.getInstance().getReference();;
+    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    public interface UserDataCallback {
+        void onUserDataReceived(HealthUserData userData);
+    }
+
+    public static void getUserData(UserDataCallback callback) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid();
+            DocumentReference userDocRef = db.collection("users").document(userId);
+
+            userDocRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    if (task.getResult().exists()) {
+                        // Fetch user data
+                        HealthUserData userData = new HealthUserData(
+                                task.getResult().getLong("age").intValue(),
+                                task.getResult().getString("gender"),
+                                task.getResult().getDouble("weight"),
+                                task.getResult().getDouble("height"),
+                                task.getResult().getLong("workoutFrequency").intValue()
+                        );
+                        callback.onUserDataReceived(userData);
+                    } else {
+                        callback.onUserDataReceived(null);
+                    }
+                } else {
+                    callback.onUserDataReceived(null);
+                }
+            });
+        } else {
+            callback.onUserDataReceived(null);
+        }
+    }
 
     public FirebaseHandler(FirebaseAuth auth,Context context )  {
         FirebaseHandler.auth =auth;
@@ -157,9 +190,12 @@ public class FirebaseHandler {
         });
     }
 
+
     public void saveTrainingPlan(String userId, Map<String, String> workoutData) {
         databaseReference.child(userId).setValue(workoutData);
     }
+
+
 
     public void getTrainingPlan(String userId, FirebaseDataCallback callback) {
         databaseReference.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
