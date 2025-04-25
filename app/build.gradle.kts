@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.example.myapplication3"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.myapplication3"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -51,6 +51,12 @@ dependencies {
     implementation (libs.logging.interceptor)
     implementation (libs.json)
     implementation(libs.volley)
+    implementation (libs.mpandroidchart)
+    implementation (libs.appcompat.v141)
+    implementation (libs.constraintlayout.v213)
+    implementation (libs.retrofit.v290)
+    implementation (libs.converter.gson.v290)
+    implementation (libs.gson)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

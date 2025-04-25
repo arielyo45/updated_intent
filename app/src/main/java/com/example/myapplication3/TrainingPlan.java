@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -30,7 +31,6 @@ public class TrainingPlan extends AppCompatActivity {
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private String userId = user.getUid();
 
-
     private EditText workoutSunday, workoutMonday, workoutTuesday, workoutWednesday,
             workoutThursday, workoutFriday, workoutSaturday;
     private Button resetButton;
@@ -40,10 +40,8 @@ public class TrainingPlan extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_plan);
 
-        showTip();
 
         training = new FirebaseHandler();
-
 
         workoutSunday = findViewById(R.id.workout_sunday);
         workoutMonday = findViewById(R.id.workout_monday);
@@ -54,7 +52,7 @@ public class TrainingPlan extends AppCompatActivity {
         workoutSaturday = findViewById(R.id.workout_saturday);
         resetButton = findViewById(R.id.resetButton);
 
-        // Load  workouts from Firebase
+        // Load workouts from Firebase
         loadData();
 
         // Save data on text change
@@ -84,7 +82,6 @@ public class TrainingPlan extends AppCompatActivity {
         });
     }
 
-
     private void saveData() {
         Map<String, String> workoutData = new HashMap<>();
         workoutData.put("Sunday", workoutSunday.getText().toString());
@@ -98,7 +95,6 @@ public class TrainingPlan extends AppCompatActivity {
         training.saveTrainingPlan(userId, workoutData);
     }
 
-
     private void loadData() {
         training.getTrainingPlan(userId, new FirebaseHandler.FirebaseDataCallback() {
             @Override
@@ -111,6 +107,9 @@ public class TrainingPlan extends AppCompatActivity {
                     workoutThursday.setText(workouts.getOrDefault("Thursday", ""));
                     workoutFriday.setText(workouts.getOrDefault("Friday", ""));
                     workoutSaturday.setText(workouts.getOrDefault("Saturday", ""));
+
+                    // Now that we have the workout data, get the Gemini tip
+                    getGeminiWorkoutTip(workouts);
                 }
             }
 
@@ -151,16 +150,28 @@ public class TrainingPlan extends AppCompatActivity {
                     .show();
         }
     }
-    private void showTip() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            Toast.makeText(this, "User not logged in.", Toast.LENGTH_SHORT).show();
+
+    private void getGeminiWorkoutTip(Map<String, String> workoutData) {
+        // Only proceed if we have some workout data to analyze
+        if (workoutData == null || workoutData.isEmpty()) {
             return;
         }
 
-        String userId = user.getUid();
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+        // Only proceed if there's at least one workout entered
+        boolean hasWorkouts = false;
+        for (String workout : workoutData.values()) {
+            if (!workout.trim().isEmpty()) {
+                hasWorkouts = true;
+                break;
+            }
+        }
 
+        if (!hasWorkouts) {
+            return; // No workouts to analyze yet
+        }
+
+        // Get user BMI for context
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -169,31 +180,101 @@ public class TrainingPlan extends AppCompatActivity {
                     int height = snapshot.child("height").getValue(Integer.class);
                     double heightInMeters = height / 100.0;
                     double bmi = weight / (heightInMeters * heightInMeters);
-                    tip = gettrainingtips(bmi);
 
+                    // Build the prompt for Gemini based on workout plan and BMI
+                    String prompt = buildGeminiPrompt(workoutData, bmi);
 
+                    // Send to Gemini API
+                    ChatCall.sendToGemini(prompt, new ChatCall.GeminiCallback() {
+                        @Override
+                        public void onTipReceived(String tip) {
+                            // Show the Gemini workout tip in an alert dialog
+                            new androidx.appcompat.app.AlertDialog.Builder(TrainingPlan.this)
+                                    .setTitle("AI Workout Analysis")
+                                    .setMessage(tip)
+                                    .setPositiveButton("Thanks!", null)
+                                    .show();
+                        }
 
-                    new androidx.appcompat.app.AlertDialog.Builder(TrainingPlan.this)
-                            .setTitle("Training tip")
-                            .setMessage(  "\nTip: " + tip)
-                            .setPositiveButton("OK", null)
-                            .show();
+                        @Override
+                        public void onError(String error) {
+                            // Silently log the error without bothering the user
+                            Log.e("GeminiAPI", "Error getting workout tip: " + error);
+                        }
+                    });
                 }
-            }
-            public  String gettrainingtips(double bmi){
-
-
-                if(bmi>=40){bip = "I highly recommend you to get as many workout days as possible especially cardio workouts as long as you do it proggresivly. ";}
-                 if(bmi>=30&&bmi<40){bip = "training cardio is reccomended, gradually increase the intesity of the workouts and youll be good";}
-                if(bmi>=25 && bmi <30){ bip = "aim to train your strength and gradually increase your cardio workouts";}
-                if(bmi<25&& bmi>=18.5){bip = "aim to balance cardio with strength training to maintain muscle tone, boost metabolism, and stay overall fit.";}
-                if(bmi<18.5){ bip = "training is not highly reccomended if you do decide to workout put your focus on strength building and try and maintain a healthy calorie dense diet";}
-                return bip;
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(TrainingPlan.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                // Silently handle the error
+                Log.e("Firebase", "Error: " + error.getMessage());
             }
         });
-}}
+    }
+
+    private String buildGeminiPrompt(Map<String, String> workoutData, double bmi) {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("Based on my workout plan and BMI of ").append(String.format("%.1f", bmi));
+        prompt.append(", please analyze my workout routine and give me one specific improvement tip.\n\n");
+        prompt.append("My current workout plan:\n");
+
+        // Add each day's workout
+        int emptyDays = 0;
+        for (Map.Entry<String, String> entry : workoutData.entrySet()) {
+            String day = entry.getKey();
+            String workout = entry.getValue().trim();
+
+            if (workout.isEmpty()) {
+                emptyDays++;
+                prompt.append(day).append(": Rest day\n");
+            } else {
+                prompt.append(day).append(": ").append(workout).append("\n");
+            }
+        }
+
+        // Add analysis hints based on workout patterns
+        String workoutString = workoutData.values().toString().toLowerCase();
+
+        // Check for workout types
+        boolean hasCardio = workoutString.contains("cardio") || workoutString.contains("run") ||
+                workoutString.contains("jog") || workoutString.contains("swim");
+        boolean hasStrength = workoutString.contains("weight") || workoutString.contains("strength") ||
+                workoutString.contains("lift") || workoutString.contains("muscle");
+        boolean hasFlexibility = workoutString.contains("stretch") || workoutString.contains("yoga") ||
+                workoutString.contains("flexibility");
+
+        // Add specific context to help Gemini provide better tips
+        if (emptyDays == 0) {
+            prompt.append("\nNote: I don't have any rest days currently scheduled.");
+        } else if (emptyDays > 4) {
+            prompt.append("\nNote: I have ").append(emptyDays).append(" rest days scheduled.");
+        }
+
+        if (!hasCardio && !hasStrength && !hasFlexibility) {
+            prompt.append("\nNote: My workout descriptions are basic. Please suggest specific workout types.");
+        } else {
+            if (!hasCardio) {
+                prompt.append("\nNote: I don't seem to have any cardio workouts.");
+            }
+            if (!hasStrength) {
+                prompt.append("\nNote: I don't seem to have any strength training workouts.");
+            }
+            if (!hasFlexibility) {
+                prompt.append("\nNote: I don't seem to have any flexibility/mobility workouts.");
+            }
+        }
+
+        // BMI-specific considerations
+        if (bmi > 30) {
+            prompt.append("\nNote: With my higher BMI, I'm looking for effective but joint-friendly options.");
+        } else if (bmi < 18.5) {
+            prompt.append("\nNote: With my lower BMI, I'm interested in building muscle and strength.");
+        }
+
+        prompt.append("\nPlease give me one practical, specific tip to improve my workout plan. Keep it to 5-8 lines maximum.");
+
+        return prompt.toString();
+    }
+
+}

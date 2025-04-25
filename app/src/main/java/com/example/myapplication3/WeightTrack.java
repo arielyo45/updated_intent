@@ -40,7 +40,6 @@ public class WeightTrack extends AppCompatActivity {
         btnShowBMI.setOnClickListener(v -> showBMI());
         btnUpdateWeight.setOnClickListener(v -> updateUserWeight());
     }
-
     private void showBMI() {
         if (isRequestRunning) return;
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -52,11 +51,14 @@ public class WeightTrack extends AppCompatActivity {
         String userId = user.getUid();
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
 
+        isRequestRunning = true;
+
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
                     Toast.makeText(WeightTrack.this, "No user data found.", Toast.LENGTH_SHORT).show();
+                    isRequestRunning = false;
                     return;
                 }
 
@@ -76,25 +78,24 @@ public class WeightTrack extends AppCompatActivity {
                         gender, height, weight, workouts, goal.toLowerCase(), bmi
                 );
 
+                ChatCall.sendToGemini(prompt, new ChatCall.GeminiCallback() {
+                    @Override
+                    public void onTipReceived(String tip) {
+                        isRequestRunning = false;
+                        showBMIResultDialog(bmi, tip);
+                    }
 
-                    ChatCall.sendToChat(prompt, new ChatCall.OpenAICallback() {
-                        @Override
-                        public void onTipReceived(String tip) {
-                            isRequestRunning = false;
-                            showBMIResultDialog(bmi, tip);
-                        }
-
-                        @Override
-                        public void onError(String error) {
-                            isRequestRunning = false;
-                            Toast.makeText(WeightTrack.this, "Error: " + error, Toast.LENGTH_LONG).show();
-                        }
-                    });
-
+                    @Override
+                    public void onError(String error) {
+                        isRequestRunning = false;
+                        Toast.makeText(WeightTrack.this, "Error: " + error, Toast.LENGTH_LONG).show();
+                    }
+                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                isRequestRunning = false;
                 Toast.makeText(WeightTrack.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

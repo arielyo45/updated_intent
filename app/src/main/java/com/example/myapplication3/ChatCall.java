@@ -1,6 +1,7 @@
 package com.example.myapplication3;
 
 import android.util.Log;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -15,57 +16,59 @@ import java.util.Map;
 
 public abstract class ChatCall {
 
-    private static final String API_KEY = "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";
-    private static final String URL = "https://api.openai.com/v1/chat/completions";
+    private static final String API_KEY = "AIzaSyBDS_iJmEubwS4VklJckj1RCyUgVdgUHo0";
+    private static final String URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBDS_iJmEubwS4VklJckj1RCyUgVdgUHo0"
+    ;
 
-    public abstract void onTipReceived(String tip);
-
-    public interface OpenAICallback {
+    public interface GeminiCallback {
         void onTipReceived(String tip);
         void onError(String error);
     }
 
-    public static void sendToChat(String prompt, final OpenAICallback callback) {
+    public static void sendToGemini(String userPrompt, final GeminiCallback callback) {
         RequestQueue queue = Volley.newRequestQueue(MyApplication.getAppContext());
 
-        JSONObject body = new JSONObject();
+        String systemInstruction = "You are a professional health and fitness advisor. Give realistic and encouraging tips. dont make the tips too long make it 5-8 lines.";
+        String fullPrompt = systemInstruction + "\nUser: " + userPrompt;
+
+        JSONObject requestBody = new JSONObject();
+        JSONArray contents = new JSONArray();
+        JSONObject contentObj = new JSONObject();
+        JSONArray parts = new JSONArray();
+
         try {
-            body.put("model", "gpt-3.5-turbo");
+            JSONObject part = new JSONObject();
+            part.put("text", fullPrompt);
 
-            JSONArray messages = new JSONArray();
-
-            JSONObject systemMessage = new JSONObject();
-            systemMessage.put("role", "system");
-            systemMessage.put("content", "You are a professional health and fitness advisor. Give realistic and encouraging tips.");
-
-            JSONObject userMessage = new JSONObject();
-            userMessage.put("role", "user");
-            userMessage.put("content", prompt);
-
-            messages.put(systemMessage);
-            messages.put(userMessage);
-
-            body.put("messages", messages);
-
+            parts.put(part);
+            contentObj.put("parts", parts);
+            contents.put(contentObj);
+            requestBody.put("contents", contents);
         } catch (JSONException e) {
-            callback.onError("Error creating JSON body: " + e.getMessage());
+            callback.onError("Error creating request body: " + e.getMessage());
             return;
         }
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, body,
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, requestBody,
                 response -> {
                     try {
-                        String tip = response.getJSONArray("choices")
-                                .getJSONObject(0)
-                                .getJSONObject("message")
-                                .getString("content");
-                        callback.onTipReceived(tip.trim());
+                        JSONArray candidates = response.getJSONArray("candidates");
+                        if (candidates.length() > 0) {
+                            String tip = candidates.getJSONObject(0)
+                                    .getJSONObject("content")
+                                    .getJSONArray("parts")
+                                    .getJSONObject(0)
+                                    .getString("text");
+                            callback.onTipReceived(tip.trim());
+                        } else {
+                            callback.onError("No response candidates received.");
+                        }
                     } catch (JSONException e) {
                         callback.onError("Failed to parse response: " + e.getMessage());
                     }
                 },
                 error -> {
-                    String errorMsg = "OpenAI request failed: ";
+                    String errorMsg = "Gemini request failed: ";
                     if (error.networkResponse != null) {
                         errorMsg += "Status Code: " + error.networkResponse.statusCode;
                         if (error.networkResponse.data != null) {
@@ -74,14 +77,11 @@ public abstract class ChatCall {
                     } else {
                         errorMsg += error.toString();
                     }
-                    Log.e("ChatCall", errorMsg); // הדפסה ללוג
-                    callback.onError(errorMsg);  // או הצגה למשתמש
-                }
-        ) {
+                    callback.onError(errorMsg);
+                }) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + API_KEY);
                 headers.put("Content-Type", "application/json");
                 return headers;
             }
