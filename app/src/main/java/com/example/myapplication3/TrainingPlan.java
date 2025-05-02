@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TrainingPlan extends AppCompatActivity {
-    private String bip;
-    private String tip;
     private boolean alertShown = false;
     private FirebaseHandler training;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -39,7 +37,8 @@ public class TrainingPlan extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_plan);
-
+        FirebaseHandler handler = new FirebaseHandler();
+        handler.updateWorkoutFrequency();
 
         training = new FirebaseHandler();
 
@@ -61,6 +60,8 @@ public class TrainingPlan extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 saveData();
                 checkForRestDaySuggestion();
+                FirebaseHandler handler = new FirebaseHandler();
+                handler.updateWorkoutFrequency();
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -93,6 +94,7 @@ public class TrainingPlan extends AppCompatActivity {
         workoutData.put("Saturday", workoutSaturday.getText().toString());
 
         training.saveTrainingPlan(userId, workoutData);
+
     }
 
     private void loadData() {

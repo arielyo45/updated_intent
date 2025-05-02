@@ -2,6 +2,7 @@ package com.example.myapplication3;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ import java.util.Map;
 public class FirebaseHandler {
     private DatabaseReference databaseReference;
     private static FirebaseAuth auth;
+    private int count =0;
     private static Context context;
     private static final DatabaseReference   mDatabase = FirebaseDatabase.getInstance().getReference();;
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -140,6 +142,50 @@ public class FirebaseHandler {
                         Toast.makeText(context, "Failed to update weight: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
+    public void updateWorkoutFrequency() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        assert user != null;
+        String userId = user.getUid();
+        DatabaseReference userWorkoutsRef = databaseReference.child(userId);
+
+        userWorkoutsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    int workoutCount = 0;
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        // You can refine this condition if needed (e.g., only count non-empty workouts)
+                        if (child.getValue() != null && !child.getValue().toString().trim().isEmpty()) {
+                            workoutCount++;
+                        }
+                    }
+
+                    // Now update the user's profile with the workout count
+                    DatabaseReference userRef = FirebaseDatabase.getInstance()
+                            .getReference("users")
+                            .child(userId);
+
+                    int finalWorkoutCount = workoutCount;
+                    userRef.child("workoutFrequency").setValue(workoutCount)
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d("Firebase", "Workout frequency updated: " + finalWorkoutCount);
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("Firebase", "Failed to update workout frequency", e);
+                            });
+
+                } else {
+                    Log.d("Firebase", "No workouts found for user: " + userId);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e("Firebase", "Database error: " + error.getMessage());
+            }
+        });
+    }
+
     public static void getData(String userId, final Context context) {
         DatabaseReference userRef = mDatabase.child("users").child(userId);
 
@@ -205,6 +251,7 @@ public class FirebaseHandler {
                     Map<String, String> workouts = new HashMap<>();
                     for (DataSnapshot child : snapshot.getChildren()) {
                         workouts.put(child.getKey(), child.getValue(String.class));
+                        if(child.getValue(String.class) != null) {count ++;}
                     }
                     callback.onDataReceived(workouts);
                 } else {

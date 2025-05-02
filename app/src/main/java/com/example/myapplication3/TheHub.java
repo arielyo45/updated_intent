@@ -49,6 +49,7 @@ public class TheHub extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
     }
 
 
