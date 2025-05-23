@@ -2,8 +2,11 @@ package com.example.myapplication3;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +18,7 @@ public class TheHub extends AppCompatActivity {
     Button W;
     Button WW;
     Button WWW;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +29,7 @@ public class TheHub extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         W = findViewById(R.id.button_weight);
         W.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,6 +38,7 @@ public class TheHub extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         WW = findViewById(R.id.shilo);
         WW.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,6 +47,7 @@ public class TheHub extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         WWW = findViewById(R.id.Food12);
         WWW.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,9 +56,14 @@ public class TheHub extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        ImageView imageView2 = findViewById(R.id.imageView2);
+        imageView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
-
-
 }
 
