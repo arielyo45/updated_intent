@@ -26,7 +26,6 @@ public class FirstTimeLogin extends AppCompatActivity {
     private int workouts;
     private boolean flag = false;
     private boolean gender;
-    private String sex;
 
 
     @Override

@@ -101,15 +101,6 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <!-- Current Gender Display -->
-
-                <!-- Change Gender Button -->
-
-                <!-- Current Age Display -->
-
-                <!-- Change Age Button -->
-
-                <!-- Current Height Display -->
                 <TextView
                     android:id="@+id/currentHeightText"
                     android:layout_width="match_parent"

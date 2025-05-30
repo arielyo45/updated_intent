@@ -64,6 +64,14 @@ public class TheHub extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        Button buddiesButton = findViewById(R.id.buddies_button);
+        buddiesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), FindFriends.class);
+                startActivity(intent);
+            }
+        });
     }
 }
 

@@ -74,7 +74,7 @@ public class WeightTrack extends AppCompatActivity {
                 String prompt = String.format(
                         "I am using a health tracking app. My gender is %s, my height is %d cm and weight is %d kg. " +
                                 "I work out %d times per week. My goal is to %s weight. My BMI is %.2f. " +
-                                "Can you give me a practical tip based on this?",
+                                "Can you give me a practical tip to get my weight to be healthier based on this?",
                         gender, height, weight, workouts, goal.toLowerCase(), bmi
                 );
 
@@ -136,13 +136,4 @@ public class WeightTrack extends AppCompatActivity {
         }
     }
 
-    private String getBMIBasedTip(double bmi, String goal) {
-        if (goal.equals("Lose")) {
-            return (bmi > 25) ? "Consider a calorie deficit and regular exercise." : "You're already in a good range!";
-        } else if (goal.equals("Bulk")) {
-            return (bmi < 18.5) ? "Increase your calorie intake and strength training." : "You're at a good weight for now!";
-        } else {
-            return "Stick to a balanced diet and regular activity!";
-        }
-    }
 }
