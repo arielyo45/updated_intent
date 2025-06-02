@@ -107,7 +107,6 @@ public class TrainingPlan extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        // Initialize spinners
         spinnerSunday = findViewById(R.id.spinner_sunday);
         spinnerMonday = findViewById(R.id.spinner_monday);
         spinnerTuesday = findViewById(R.id.spinner_tuesday);
@@ -116,7 +115,6 @@ public class TrainingPlan extends AppCompatActivity {
         spinnerFriday = findViewById(R.id.spinner_friday);
         spinnerSaturday = findViewById(R.id.spinner_saturday);
 
-        // Initialize description EditTexts
         descSunday = findViewById(R.id.desc_sunday);
         descMonday = findViewById(R.id.desc_monday);
         descTuesday = findViewById(R.id.desc_tuesday);
@@ -390,7 +388,7 @@ public class TrainingPlan extends AppCompatActivity {
     private String buildGeminiPrompt(Map<String, String> workoutData, double bmi) {
         StringBuilder prompt = new StringBuilder();
         prompt.append("Based on my workout plan and BMI of ").append(String.format("%.1f", bmi));
-        prompt.append(", please analyze my workout routine and give me one specific improvement tip.\n\n");
+        prompt.append(", please analyze my workout routine and give me specific improvement tips.\n\n");
         prompt.append("My current workout plan:\n");
 
         // Add each day's workout
