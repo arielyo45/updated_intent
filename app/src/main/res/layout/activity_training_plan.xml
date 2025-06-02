@@ -1,243 +1,276 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout2"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#f5f5f5">
 
-    <TextView
-        android:id="@+id/textView24"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
-        android:text="Training Plan"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.488"
-        app:layout_constraintStart_toStartOf="@+id/scrollView3"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.036" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/scrollView3"
-        android:layout_width="388dp"
-        android:layout_height="530dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.695"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.394">
-
-
-        <!-- Workout input fields -->
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView17"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sunday"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.065"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.068" />
+            android:text="Training Plan"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="20dp"
+            android:textColor="#333333" />
 
-        <EditText
-            android:id="@+id/workout_friday"
-            android:layout_width="214dp"
-            android:layout_height="63dp"
-            android:layout_marginStart="149dp"
-            android:layout_marginBottom="14dp"
-            android:hint="Enter workout"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.36"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.794" />
-
-        <TextView
-            android:id="@+id/textView18"
-            android:layout_width="wrap_content"
+        <!-- Sunday -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Monday"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/workout_friday"
-            app:layout_constraintHorizontal_bias="0.181"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.194" />
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp">
 
-        <EditText
-            android:id="@+id/workout_saturday"
-            android:layout_width="214dp"
-            android:layout_height="63dp"
-            android:layout_marginStart="66dp"
-            android:hint="Enter workout"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.842"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.922" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sunday"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="8dp" />
 
-        <TextView
-            android:id="@+id/textView19"
-            android:layout_width="wrap_content"
+            <Spinner
+                android:id="@+id/spinner_sunday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/desc_sunday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Add description (e.g., chest day, 5km run)"
+                android:maxLines="2"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Monday -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="43dp"
-            android:text="Tuesday"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/textView20"
-            app:layout_constraintEnd_toStartOf="@+id/workout_friday"
-            app:layout_constraintHorizontal_bias="0.188"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView18"
-            app:layout_constraintVertical_bias="0.0" />
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp">
 
-        <EditText
-            android:id="@+id/workout_sunday"
-            android:layout_width="214dp"
-            android:layout_height="63dp"
-            android:layout_marginStart="80dp"
-            android:layout_marginBottom="7dp"
-            android:hint="Enter workout"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.819"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.032" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Monday"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="8dp" />
 
-        <TextView
-            android:id="@+id/textView20"
-            android:layout_width="117dp"
-            android:layout_height="36dp"
-            android:text="Wednesday"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.061"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.455" />
+            <Spinner
+                android:id="@+id/spinner_monday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp" />
 
-        <EditText
-            android:id="@+id/workout_tuesday"
-            android:layout_width="214dp"
-            android:layout_height="63dp"
-            android:layout_marginStart="68dp"
-            android:hint="Enter workout"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.839"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.331" />
+            <EditText
+                android:id="@+id/desc_monday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Add description (e.g., chest day, 5km run)"
+                android:maxLines="2"
+                android:textSize="14sp" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/textView21"
-            android:layout_width="wrap_content"
+        <!-- Tuesday -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Thursday"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.052"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.59" />
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp">
 
-        <EditText
-            android:id="@+id/workout_thursday"
-            android:layout_width="214dp"
-            android:layout_height="63dp"
-            android:layout_marginStart="46dp"
-            android:hint="Enter workout"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.867"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.616" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tuesday"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="8dp" />
 
-        <TextView
-            android:id="@+id/textView22"
-            android:layout_width="wrap_content"
+            <Spinner
+                android:id="@+id/spinner_tuesday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/desc_tuesday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Add description (e.g., chest day, 5km run)"
+                android:maxLines="2"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Wednesday -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Friday"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.094"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.737" />
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp">
 
-        <EditText
-            android:id="@+id/workout_monday"
-            android:layout_width="214dp"
-            android:layout_height="63dp"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wednesday"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="8dp" />
 
-            android:hint="Enter workout"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.903"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.166" />
+            <Spinner
+                android:id="@+id/spinner_wednesday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp" />
 
-        <TextView
-            android:id="@+id/textView23"
-            android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/desc_wednesday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Add description (e.g., chest day, 5km run)"
+                android:maxLines="2"
+                android:textSize="14sp" />
+        </LinearLayout>
 
+        <!-- Thursday -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="33dp"
-            android:layout_marginTop="66dp"
-            android:layout_marginEnd="66dp"
-            android:layout_marginBottom="63dp"
-            android:text="Saturday"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/workout_monday"
-            app:layout_constraintHorizontal_bias="0.571"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView22"
-            app:layout_constraintVertical_bias="0.937" />
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp">
 
-        <EditText
-            android:id="@+id/workout_wednesday"
-            android:layout_width="214dp"
-            android:layout_height="63dp"
-            android:layout_marginEnd="16dp"
-            android:hint="Enter workout"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.481" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thursday"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="8dp" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <Spinner
+                android:id="@+id/spinner_thursday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp" />
 
-    <Button
-        android:id="@+id/resetButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="146dp"
-        android:layout_marginEnd="145dp"
-        android:padding="8dp"
-        android:text="Reset Plan"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.666"
-        app:layout_constraintStart_toStartOf="@+id/scrollView3"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView3" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <EditText
+                android:id="@+id/desc_thursday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Add description (e.g., chest day, 5km run)"
+                android:maxLines="2"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Friday -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Friday"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="8dp" />
+
+            <Spinner
+                android:id="@+id/spinner_friday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/desc_friday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Add description (e.g., chest day, 5km run)"
+                android:maxLines="2"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Saturday -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Saturday"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="8dp" />
+
+            <Spinner
+                android:id="@+id/spinner_saturday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/desc_saturday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Add description (e.g., chest day, 5km run)"
+                android:maxLines="2"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <Button
+                android:id="@+id/resetButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Reset Plan"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="#ff6b6b"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/aiTipsButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Get AI Tips"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="#4ecdc4"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
