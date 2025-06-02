@@ -4,16 +4,24 @@ package com.example.myapplication3;
 public class Friend {
     private String userId;
     private String gender;
+    private String username;
+
     private int workoutFrequency;
     private String workout;
     private String day;
 
-    public Friend(String userId, String gender, int workoutFrequency, String workout, String day) {
+    public Friend(String userId, String gender, int workoutFrequency, String workout, String day, String username) {
         this.userId = userId;
         this.gender = gender;
         this.workoutFrequency = workoutFrequency;
         this.workout = workout;
         this.day = day;
+        this.username = username;
+    }
+
+
+    public String getUsername() {
+        return username != null && !username.isEmpty() ? username : getDisplayName();
     }
 
     public String getUserId() { return userId; }
@@ -22,8 +30,7 @@ public class Friend {
     public String getWorkout() { return workout; }
     public String getDay() { return day; }
 
-    // Generate anonymous display name
     public String getDisplayName() {
-        return gender + " Trainee #" + userId.substring(0, 6);
+        return username != null && !username.isEmpty() ? username : (gender + " Trainee #" + userId.substring(0, 6));
     }
 }

@@ -1,5 +1,7 @@
 package com.example.myapplication3;
 
+import static com.example.myapplication3.FirebaseHandler.updateHeight;
+
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
@@ -37,12 +39,12 @@ import java.util.Map;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private TextView currentEmailText, currentHeightText;
-    private Button changeEmailBtn, changePasswordBtn, changeHeightBtn, signOutBtn;
+    private TextView currentEmailText, currentHeightText, currentUsernameText;
+    private Button changeEmailBtn, changePasswordBtn, changeHeightBtn, signOutBtn, changeUsernameBtn;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
     private DatabaseReference userRef;
-    private FirebaseFirestore db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,6 @@ public class SettingsActivity extends AppCompatActivity {
         // Initialize Firebase
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
-        db = FirebaseFirestore.getInstance();
 
         if (currentUser != null) {
             userRef = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
@@ -75,6 +76,8 @@ public class SettingsActivity extends AppCompatActivity {
         changePasswordBtn = findViewById(R.id.changePasswordBtn);
         changeHeightBtn = findViewById(R.id.changeHeightBtn);
         signOutBtn = findViewById(R.id.signOutBtn);
+        currentUsernameText = findViewById(R.id.currentUsernameText);
+        changeUsernameBtn = findViewById(R.id.changeUsernameBtn);
     }
 
     private void loadUserData() {
@@ -90,9 +93,9 @@ public class SettingsActivity extends AppCompatActivity {
                 if (snapshot.exists()) {
 
                     Integer height = snapshot.child("height").getValue(Integer.class);
-
-
                     currentHeightText.setText("Current Height: " + (height != null ? height + " cm" : "Not set"));
+                    String username = snapshot.child("username").getValue(String.class);
+                    currentUsernameText.setText("Current Username: " + (username != null ? username : "Not set"));
                 }
             }
 
@@ -108,6 +111,8 @@ public class SettingsActivity extends AppCompatActivity {
         changePasswordBtn.setOnClickListener(v -> showChangePasswordDialog());
         changeHeightBtn.setOnClickListener(v -> showChangeHeightDialog());
         signOutBtn.setOnClickListener(v -> signOut());
+        changeUsernameBtn.setOnClickListener(v -> showChangeUsernameDialog());
+
     }
 
     private void showChangeEmailDialog() {
@@ -168,7 +173,47 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
     }
+    private void showChangeUsernameDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Change Username");
 
+        final EditText usernameInput = new EditText(this);
+        usernameInput.setHint("Enter new username");
+        usernameInput.setInputType(InputType.TYPE_CLASS_TEXT);
+        usernameInput.setPadding(50, 40, 50, 10);
+
+        builder.setView(usernameInput);
+
+        builder.setPositiveButton("Update", (dialog, which) -> {
+            String newUsername = usernameInput.getText().toString().trim();
+            if (newUsername.isEmpty()) {
+                Toast.makeText(this, "Please enter a username", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (newUsername.length() < 3 || newUsername.length() > 20) {
+                Toast.makeText(this, "Username must be between 3-20 characters", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            updateUsername(newUsername);
+        });
+
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+
+    private void updateUsername(String username) {
+        if (userRef == null) return;
+
+        userRef.child("username").setValue(username)
+                .addOnSuccessListener(aVoid -> {
+                    currentUsernameText.setText("Current Username: " + username);
+                    Toast.makeText(this, "Username updated successfully!", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Failed to update username: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
     private void showChangePasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Change Password");
@@ -268,6 +313,8 @@ public class SettingsActivity extends AppCompatActivity {
                     return;
                 }
                 updateHeight(height);
+                currentHeightText.setText("Current Height: " + height + " cm");
+
             } catch (NumberFormatException e) {
                 Toast.makeText(this, "Please enter a valid number", Toast.LENGTH_SHORT).show();
             }
@@ -277,17 +324,6 @@ public class SettingsActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void updateHeight(int height) {
-        if (userRef == null) return;
-
-        userRef.child("height").setValue(height)
-                .addOnSuccessListener(aVoid -> {
-                    currentHeightText.setText("Current Height: " + height + " cm");
-                    Toast.makeText(this, "Height updated successfully!", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Failed to update height: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-    }
 
     private void signOut() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

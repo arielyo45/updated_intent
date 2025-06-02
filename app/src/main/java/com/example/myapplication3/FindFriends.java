@@ -206,7 +206,9 @@ public class FindFriends extends AppCompatActivity {
                     if (userSnapshot.exists()) {
                         // Get user details
                         String gender = userSnapshot.child("gender").getValue(String.class);
+                        String username = userSnapshot.child("username").getValue(String.class);
                         Integer workoutFreq = userSnapshot.child("workoutFrequency").getValue(Integer.class);
+
 
                         // Get workout details
                         trainingPlansRef.child(userId).child(day).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -219,7 +221,8 @@ public class FindFriends extends AppCompatActivity {
                                         gender != null ? gender : "Unknown",
                                         workoutFreq != null ? workoutFreq : 0,
                                         workout != null ? workout : "",
-                                        day
+                                        day,
+                                        username != null ? username : "Anonymous"
                                 );
 
                                 buddiesList.add(friend);

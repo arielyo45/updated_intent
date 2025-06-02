@@ -115,13 +115,13 @@ public class FirebaseHandler {
                     }
                 });
     }
-    public static void saveFirstTimeUser(int height, int workouts, int weight, boolean gender) {
+    public static void saveFirstTimeUser(int height, int workouts, int weight, boolean gender, String username) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         assert user != null;
         String userId = user.getUid();
 
-        User account = new User(weight, height, workouts, gender);
+        User account = new User(weight, height, workouts, gender, username);
         mDatabase.child("users").child(userId).setValue(account)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "Data saved successfully!", Toast.LENGTH_SHORT).show();
@@ -140,6 +140,27 @@ public class FirebaseHandler {
                         Toast.makeText(context, "Weight updated successfully!", Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e ->
                         Toast.makeText(context, "Failed to update weight: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+    public static void updateHeight(int height) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        assert user != null;
+        String userId = user.getUid();
+        mDatabase.child("users").child(userId).child("height").setValue(height)
+                .addOnSuccessListener(aVoid ->
+                    Toast.makeText(context, "Height updated successfully!", Toast.LENGTH_SHORT).show())
+
+                .addOnFailureListener(e ->
+                        Toast.makeText(context, "Failed to update height: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+    public static void updateUsername(String newUsername) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        assert user != null;
+        String userId = user.getUid();
+        mDatabase.child("users").child(userId).child("username").setValue(newUsername)
+                .addOnSuccessListener(aVoid ->
+                        Toast.makeText(context, "Username updated successfully!", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e ->
+                        Toast.makeText(context, "Failed to update username: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     public void updateWorkoutFrequency() {
@@ -276,13 +297,13 @@ public class FirebaseHandler {
         public int height;
         public int workoutFrequency;
         public String gender;
-                public User() {
-                }
-
-        public User(int weight, int height, int workoutFrequency, boolean gender) {
+        public String username;
+        public User() {}
+        public User(int weight, int height, int workoutFrequency, boolean gender, String username) {
             this.weight = weight;
             this.height = height;
             this.workoutFrequency = workoutFrequency;
+            this.username = username;
             if (gender) this.gender = "Male";
             else this.gender = "Female";
         }

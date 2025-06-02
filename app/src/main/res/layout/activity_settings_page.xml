@@ -45,17 +45,14 @@
                     android:textColor="#333333"
                     android:layout_marginBottom="16dp" />
 
-                <!-- Current Email Display -->
                 <TextView
                     android:id="@+id/currentEmailText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
                     android:text="Current Email: Loading..."
-                    android:textSize="14sp"
                     android:textColor="#666666"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- Change Email Button -->
+                    android:textSize="14sp" />
                 <Button
                     android:id="@+id/changeEmailBtn"
                     android:layout_width="match_parent"
@@ -65,7 +62,6 @@
                     android:textColor="@android:color/white"
                     android:layout_marginBottom="8dp" />
 
-                <!-- Change Password Button -->
                 <Button
                     android:id="@+id/changePasswordBtn"
                     android:layout_width="match_parent"
@@ -73,6 +69,18 @@
                     android:text="Change Password"
                     android:backgroundTint="#2196F3"
                     android:textColor="@android:color/white" />
+                <TextView
+                    android:id="@+id/currentUsernameText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Current Username: Loading..."
+                    android:textSize="16sp" />
+                <Button
+                    android:id="@+id/changeUsernameBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Change Username" />
+
 
             </LinearLayout>
 

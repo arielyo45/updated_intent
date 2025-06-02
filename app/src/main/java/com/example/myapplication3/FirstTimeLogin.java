@@ -26,6 +26,7 @@ public class FirstTimeLogin extends AppCompatActivity {
     private int workouts;
     private boolean flag = false;
     private boolean gender;
+    private String username;
 
 
     @Override
@@ -33,7 +34,7 @@ public class FirstTimeLogin extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_time_login);
 
-
+        EditText usernameEditText = findViewById(R.id.editTextUsername);
         EditText weightEditText = findViewById(R.id.editTextText3);
         EditText heightEditText = findViewById(R.id.editTextText4);
         EditText workoutEditText = findViewById(R.id.editTextText2);
@@ -52,7 +53,11 @@ public class FirstTimeLogin extends AppCompatActivity {
                     Toast.makeText(FirstTimeLogin.this, "Please enter valid numbers!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+                username = usernameEditText.getText().toString().trim();
+                if (username.isEmpty()) {
+                    Toast.makeText(FirstTimeLogin.this, "Please enter a username!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 if (isMale.isChecked()) {
                     gender = true;
@@ -70,11 +75,11 @@ public class FirstTimeLogin extends AppCompatActivity {
 
                             flag =true;
                             Toast.makeText(
-                                    FirstTimeLogin.this,
-                                    "Weight: " + weight + " kg\nHeight: " + height + " cm\nWorkouts/Week: " + workouts + "\nGender: " + gender,
-                                    Toast.LENGTH_LONG
+                                FirstTimeLogin.this,
+                                "Weight: " + weight + " kg\nHeight: " + height + " cm\nWorkouts/Week: " + workouts + "\nGender: " + gender + "\nUsername: " + username,
+                                Toast.LENGTH_LONG
                             ).show();
-                            FirebaseHandler.saveFirstTimeUser(height, workouts, weight, gender);
+                            FirebaseHandler.saveFirstTimeUser(height, workouts, weight, gender, username);
 
                     }
 
@@ -89,11 +94,6 @@ public class FirstTimeLogin extends AppCompatActivity {
                             Toast.LENGTH_LONG
                     ).show();
                 }
-
-
-
-
-
 
             }
         });
