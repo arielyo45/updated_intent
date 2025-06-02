@@ -1,6 +1,5 @@
 package com.example.myapplication3;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +15,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.auth.User;
@@ -27,12 +28,21 @@ public class FirstTimeLogin extends AppCompatActivity {
     private boolean flag = false;
     private boolean gender;
     private String username;
-
+    private String userEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_time_login);
+
+        // Get email from intent or Firebase user
+        userEmail = getIntent().getStringExtra("user_email");
+        if (userEmail == null) {
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                userEmail = currentUser.getEmail();
+            }
+        }
 
         EditText usernameEditText = findViewById(R.id.editTextUsername);
         EditText weightEditText = findViewById(R.id.editTextText3);
@@ -68,23 +78,18 @@ public class FirstTimeLogin extends AppCompatActivity {
                     return;
                 }
 
-
                 if(workouts<10&&workouts>=0){
-                if (weight < 140 && weight > 40) {
-                    if (height > 120 && height < 230) {
-
+                    if (weight < 140 && weight > 40) {
+                        if (height > 120 && height < 230) {
                             flag =true;
                             Toast.makeText(
-                                FirstTimeLogin.this,
-                                "Weight: " + weight + " kg\nHeight: " + height + " cm\nWorkouts/Week: " + workouts + "\nGender: " + gender + "\nUsername: " + username,
-                                Toast.LENGTH_LONG
+                                    FirstTimeLogin.this,
+                                    "Weight: " + weight + " kg\nHeight: " + height + " cm\nWorkouts/Week: " + workouts + "\nGender: " + gender + "\nUsername: " + username,
+                                    Toast.LENGTH_LONG
                             ).show();
-                            FirebaseHandler.saveFirstTimeUser(height, workouts, weight, gender, username);
-
+                            FirebaseHandler.saveFirstTimeUser(height, workouts, weight, gender, username, userEmail);
+                        }
                     }
-
-                    }
-
                 }
                 if (!flag)
                 {
@@ -94,16 +99,7 @@ public class FirstTimeLogin extends AppCompatActivity {
                             Toast.LENGTH_LONG
                     ).show();
                 }
-
             }
         });
     }
 }
-
-
-
-
-
-
-
-

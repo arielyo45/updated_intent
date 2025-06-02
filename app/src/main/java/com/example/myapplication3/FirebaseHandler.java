@@ -70,13 +70,10 @@ public class FirebaseHandler {
     public FirebaseHandler(FirebaseAuth auth,Context context )  {
         FirebaseHandler.auth =auth;
         FirebaseHandler.context = context;
-
-
     }
 
     public FirebaseHandler() {
         databaseReference = FirebaseDatabase.getInstance().getReference("TrainingPlans");
-
     }
 
     public void SignIn(String sEmail, String sPassword){
@@ -87,12 +84,13 @@ public class FirebaseHandler {
                 @Override
                 public void onSuccess(AuthResult authResult) {
                     Toast.makeText(context, "You are Signed in", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(context, TheHub.class);
-                        context.startActivity(intent);
+                    Intent intent = new Intent(context, TheHub.class);
+                    context.startActivity(intent);
                 }
             });
         }
     }
+
     public void SignUp(String sEmail, String sPassword) {
         if (sEmail.isEmpty() || sPassword.isEmpty()) {
             Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show();
@@ -106,6 +104,7 @@ public class FirebaseHandler {
                         if (task.isSuccessful()) {
                             Toast.makeText(context, "Succesfully Signed Up!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(context, FirstTimeLogin.class);
+                            intent.putExtra("user_email", sEmail); // Pass email to FirstTimeLogin
                             context.startActivity(intent);
 
                         } else {
@@ -115,13 +114,14 @@ public class FirebaseHandler {
                     }
                 });
     }
-    public static void saveFirstTimeUser(int height, int workouts, int weight, boolean gender, String username) {
+
+    public static void saveFirstTimeUser(int height, int workouts, int weight, boolean gender, String username, String email) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         assert user != null;
         String userId = user.getUid();
 
-        User account = new User(weight, height, workouts, gender, username);
+        User account = new User(weight, height, workouts, gender, username, email);
         mDatabase.child("users").child(userId).setValue(account)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "Data saved successfully!", Toast.LENGTH_SHORT).show();
@@ -131,6 +131,7 @@ public class FirebaseHandler {
                 })
                 .addOnFailureListener(e -> Toast.makeText(context, "Failed to save data: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
+
     public static void updateWeight( int newWeight) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         assert user != null;
@@ -147,7 +148,7 @@ public class FirebaseHandler {
         String userId = user.getUid();
         mDatabase.child("users").child(userId).child("height").setValue(height)
                 .addOnSuccessListener(aVoid ->
-                    Toast.makeText(context, "Height updated successfully!", Toast.LENGTH_SHORT).show())
+                        Toast.makeText(context, "Height updated successfully!", Toast.LENGTH_SHORT).show())
 
                 .addOnFailureListener(e ->
                         Toast.makeText(context, "Failed to update height: " + e.getMessage(), Toast.LENGTH_SHORT).show());
@@ -298,14 +299,18 @@ public class FirebaseHandler {
         public int workoutFrequency;
         public String gender;
         public String username;
+        public String email;
+
         public User() {}
-        public User(int weight, int height, int workoutFrequency, boolean gender, String username) {
+
+        public User(int weight, int height, int workoutFrequency, boolean gender, String username, String email) {
             this.weight = weight;
             this.height = height;
             this.workoutFrequency = workoutFrequency;
             this.username = username;
+            this.email = email;
             if (gender) this.gender = "Male";
             else this.gender = "Female";
         }
-}}
-
+    }
+}

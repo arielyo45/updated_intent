@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,7 +24,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class FindFriends extends AppCompatActivity {
 
@@ -88,6 +88,29 @@ public class FindFriends extends AppCompatActivity {
     private void setupListView() {
         adapter = new FriendAdapter(this, buddiesList);
         buddiesListView.setAdapter(adapter);
+
+        // Add click listener to handle item clicks
+        buddiesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Friend selectedFriend = buddiesList.get(position);
+                showContactDialog(selectedFriend);
+            }
+        });
+    }
+
+    private void showContactDialog(Friend friend) {
+        String message = "Contact Information:\n\n" +
+                "Name: " + friend.getDisplayName() + "\n" +
+                "Email: " + (friend.getEmail() != null ? friend.getEmail() : "Not available") + "\n" +
+                "Workout: " + friend.getWorkout() + "\n" +
+                "Weekly Frequency: " + friend.getWorkoutFrequency() + " times";
+
+        new AlertDialog.Builder(this)
+                .setTitle("Workout Buddy Contact")
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     private void findWorkoutBuddies(String selectedDay) {
@@ -207,8 +230,8 @@ public class FindFriends extends AppCompatActivity {
                         // Get user details
                         String gender = userSnapshot.child("gender").getValue(String.class);
                         String username = userSnapshot.child("username").getValue(String.class);
+                        String email = userSnapshot.child("email").getValue(String.class);
                         Integer workoutFreq = userSnapshot.child("workoutFrequency").getValue(Integer.class);
-
 
                         // Get workout details
                         trainingPlansRef.child(userId).child(day).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -222,7 +245,8 @@ public class FindFriends extends AppCompatActivity {
                                         workoutFreq != null ? workoutFreq : 0,
                                         workout != null ? workout : "",
                                         day,
-                                        username != null ? username : "Anonymous"
+                                        username != null ? username : "Anonymous",
+                                        email != null ? email : "Not available"
                                 );
 
                                 buddiesList.add(friend);
