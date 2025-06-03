@@ -34,37 +34,7 @@ public class FirebaseHandler {
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public interface UserDataCallback {
-        void onUserDataReceived(HealthUserData userData);
-    }
-
-    public static void getUserData(UserDataCallback callback) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            String userId = user.getUid();
-            DocumentReference userDocRef = db.collection("users").document(userId);
-
-            userDocRef.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    if (task.getResult().exists()) {
-                        // Fetch user data
-                        HealthUserData userData = new HealthUserData(
-                                task.getResult().getLong("age").intValue(),
-                                task.getResult().getString("gender"),
-                                task.getResult().getDouble("weight"),
-                                task.getResult().getDouble("height"),
-                                task.getResult().getLong("workoutFrequency").intValue()
-                        );
-                        callback.onUserDataReceived(userData);
-                    } else {
-                        callback.onUserDataReceived(null);
-                    }
-                } else {
-                    callback.onUserDataReceived(null);
-                }
-            });
-        } else {
-            callback.onUserDataReceived(null);
-        }
+        void onUserDataReceived(User userData);
     }
 
     public FirebaseHandler(FirebaseAuth auth,Context context )  {
@@ -153,17 +123,6 @@ public class FirebaseHandler {
                 .addOnFailureListener(e ->
                         Toast.makeText(context, "Failed to update height: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
-    public static void updateUsername(String newUsername) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        assert user != null;
-        String userId = user.getUid();
-        mDatabase.child("users").child(userId).child("username").setValue(newUsername)
-                .addOnSuccessListener(aVoid ->
-                        Toast.makeText(context, "Username updated successfully!", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e ->
-                        Toast.makeText(context, "Failed to update username: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-    }
-
     public void updateWorkoutFrequency() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         assert user != null;

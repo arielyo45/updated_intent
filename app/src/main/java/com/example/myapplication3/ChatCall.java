@@ -28,7 +28,7 @@ public abstract class ChatCall {
     public static void sendToGemini(String userPrompt, final GeminiCallback callback) {
         RequestQueue queue = Volley.newRequestQueue(MyApplication.getAppContext());
 
-        String systemInstruction = "You are a professional health and fitness advisor. Give realistic and encouraging tips. dont make the tips too long make it 5-8 lines.";
+        String systemInstruction = "You are a professional fitness advisor. Give realistic and encouraging tips. dont make the tips too long make it 7-9 lines.";
         String fullPrompt = systemInstruction + "\nUser: " + userPrompt;
 
         JSONObject requestBody = new JSONObject();
@@ -80,7 +80,7 @@ public abstract class ChatCall {
                     callback.onError(errorMsg);
                 }) {
             @Override
-            public Map<String, String> getHeaders() {
+            public Map<String, String> getHeaders() { //has an automatic use in Volley actions like JsonObjectRequest
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json");
                 return headers;
