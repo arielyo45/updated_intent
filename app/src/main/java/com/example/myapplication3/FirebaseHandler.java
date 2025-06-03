@@ -260,7 +260,13 @@ public class FirebaseHandler {
 
 
     public void saveTrainingPlan(String userId, Map<String, String> workoutData) {
-        databaseReference.child(userId).setValue(workoutData);
+        databaseReference.child(userId).setValue(workoutData)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firebase", "Training plan saved successfully for user: " + userId);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firebase", "Failed to save training plan for user: " + userId, e);
+                });
     }
 
 

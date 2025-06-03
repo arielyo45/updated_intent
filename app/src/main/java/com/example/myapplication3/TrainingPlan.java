@@ -2,6 +2,7 @@ package com.example.myapplication3;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -33,7 +34,13 @@ import java.util.Map;
 
 public class TrainingPlan extends AppCompatActivity {
     private boolean alertShown = false;
+    private boolean dataLoaded = false; // Add this flag
+
     private FirebaseHandler training;
+    // Add these fields to your TrainingPlan class
+    private Handler saveHandler = new Handler();
+    private Runnable saveRunnable;
+    private static final int SAVE_DELAY = 1000;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private String userId = user.getUid();
 
@@ -184,6 +191,10 @@ public class TrainingPlan extends AppCompatActivity {
     }
 
     private void saveData() {
+        if (!dataLoaded) {
+            Log.d("TrainingPlan", "Data not loaded yet, skipping save");
+            return;
+        }
         Map<String, String> workoutData = new HashMap<>();
 
         workoutData.put("Sunday", getWorkoutString(spinnerSunday, descSunday));
@@ -194,7 +205,48 @@ public class TrainingPlan extends AppCompatActivity {
         workoutData.put("Friday", getWorkoutString(spinnerFriday, descFriday));
         workoutData.put("Saturday", getWorkoutString(spinnerSaturday, descSaturday));
 
+        Log.d("TrainingPlan", "User ID: " + userId);
+        Log.d("TrainingPlan", "Workout data to save: " + workoutData.toString());
+
+        // Check if user is authenticated
+        if (user == null) {
+            Log.e("TrainingPlan", "User is null - not authenticated!");
+            return;
+        }
+
+        if (userId == null || userId.isEmpty()) {
+            Log.e("TrainingPlan", "User ID is null or empty!");
+            return;
+        }
+
         training.saveTrainingPlan(userId, workoutData);
+        Log.d("TrainingPlan", "Called saveTrainingPlan() method");
+    }
+
+    // Modified loadData method
+    private void loadData() {
+
+        training.getTrainingPlan(userId, new FirebaseHandler.FirebaseDataCallback() {
+            @Override
+            public void onDataReceived(Map<String, String> workouts) {
+                if (workouts != null) {
+                    setWorkoutFromString("Sunday", workouts.getOrDefault("Sunday", "Rest Day"), spinnerSunday, descSunday);
+                    setWorkoutFromString("Monday", workouts.getOrDefault("Monday", "Rest Day"), spinnerMonday, descMonday);
+                    setWorkoutFromString("Tuesday", workouts.getOrDefault("Tuesday", "Rest Day"), spinnerTuesday, descTuesday);
+                    setWorkoutFromString("Wednesday", workouts.getOrDefault("Wednesday", "Rest Day"), spinnerWednesday, descWednesday);
+                    setWorkoutFromString("Thursday", workouts.getOrDefault("Thursday", "Rest Day"), spinnerThursday, descThursday);
+                    setWorkoutFromString("Friday", workouts.getOrDefault("Friday", "Rest Day"), spinnerFriday, descFriday);
+                    setWorkoutFromString("Saturday", workouts.getOrDefault("Saturday", "Rest Day"), spinnerSaturday, descSaturday);
+                }
+                dataLoaded = true;
+            }
+
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+                dataLoaded = true;
+            }
+        });
     }
 
     private String getWorkoutString(Spinner spinner, EditText description) {
@@ -212,27 +264,6 @@ public class TrainingPlan extends AppCompatActivity {
         }
     }
 
-    private void loadData() {
-        training.getTrainingPlan(userId, new FirebaseHandler.FirebaseDataCallback() {
-            @Override
-            public void onDataReceived(Map<String, String> workouts) {
-                if (workouts != null) {
-                    setWorkoutFromString("Sunday", workouts.getOrDefault("Sunday", "Rest Day"), spinnerSunday, descSunday);
-                    setWorkoutFromString("Monday", workouts.getOrDefault("Monday", "Rest Day"), spinnerMonday, descMonday);
-                    setWorkoutFromString("Tuesday", workouts.getOrDefault("Tuesday", "Rest Day"), spinnerTuesday, descTuesday);
-                    setWorkoutFromString("Wednesday", workouts.getOrDefault("Wednesday", "Rest Day"), spinnerWednesday, descWednesday);
-                    setWorkoutFromString("Thursday", workouts.getOrDefault("Thursday", "Rest Day"), spinnerThursday, descThursday);
-                    setWorkoutFromString("Friday", workouts.getOrDefault("Friday", "Rest Day"), spinnerFriday, descFriday);
-                    setWorkoutFromString("Saturday", workouts.getOrDefault("Saturday", "Rest Day"), spinnerSaturday, descSaturday);
-                }
-            }
-
-            @Override
-            public void onError(Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
 
     private void setWorkoutFromString(String day, String workoutString, Spinner spinner, EditText description) {
         if (workoutString.isEmpty() || workoutString.equals("Rest Day")) {
@@ -388,7 +419,7 @@ public class TrainingPlan extends AppCompatActivity {
     private String buildGeminiPrompt(Map<String, String> workoutData, double bmi) {
         StringBuilder prompt = new StringBuilder();
         prompt.append("Based on my workout plan and BMI of ").append(String.format("%.1f", bmi));
-        prompt.append(", please analyze my workout routine and give me specific improvement tips.\n\n");
+        prompt.append(", please analyze my workout routine review it and give me specific improvement tips based on the current workout plan.\n\n");
         prompt.append("My current workout plan:\n");
 
         // Add each day's workout
