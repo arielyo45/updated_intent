@@ -34,9 +34,6 @@ public class WeightTrack extends AppCompatActivity {
         btnShowBMI = findViewById(R.id.buttonShowBMI);
         btnUpdateWeight = findViewById(R.id.buttonUpdateWeight);
         editTextWeight = findViewById(R.id.editTextWeight);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseHandler.getData(user.getUid(), this);
-
         btnShowBMI.setOnClickListener(v -> showBMI());
         btnUpdateWeight.setOnClickListener(v -> updateUserWeight());
     }
@@ -61,16 +58,14 @@ public class WeightTrack extends AppCompatActivity {
                     isRequestRunning = false;
                     return;
                 }
-
-                int weight = snapshot.child("weight").getValue(Integer.class);
-                int height = snapshot.child("height").getValue(Integer.class);
-                String gender = snapshot.child("gender").getValue(String.class);
+                FirebaseHandler.User user = snapshot.getValue(FirebaseHandler.User.class);
+                int weight = user.weight;
+                int height = user.height;
+                double heightInMeters = height / 100.0;
+                double bmi = weight / (heightInMeters * heightInMeters);
+                String gender = user.gender;
                 String goal = getSelectedGoal();
-                int workouts = snapshot.child("workoutFrequency").getValue(Integer.class);
-
-                double heightM = height / 100.0;
-                double bmi = weight / (heightM * heightM);
-
+                int workouts = user.workoutFrequency;
                 String prompt = String.format(
                         "I am using a health tracking app. My gender is %s, my height is %d cm and weight is %d kg. " +
                                 "I work out %d times per week. My goal is to %s weight. My BMI is %.2f. " +

@@ -22,27 +22,22 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.auth.User;
 
 public class FirstTimeLogin extends AppCompatActivity {
-    private int height;
-    private int weight;
-    private int workouts;
+    private int height,weight,workouts;
     private boolean flag = false;
     private boolean gender;
-    private String username;
-    private String userEmail;
+    private String username, userEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_time_login);
 
-        // Get email from intent or Firebase user
-        userEmail = getIntent().getStringExtra("user_email");
-        if (userEmail == null) {
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-            if (currentUser != null) {
-                userEmail = currentUser.getEmail();
-            }
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+                if(currentUser.getEmail()!=null){
+                userEmail = currentUser.getEmail();}
         }
+
 
         EditText usernameEditText = findViewById(R.id.editTextUsername);
         EditText weightEditText = findViewById(R.id.editTextText3);

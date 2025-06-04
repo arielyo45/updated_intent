@@ -31,7 +31,6 @@ public class FirebaseHandler {
     private int count =0;
     private static Context context;
     private static final DatabaseReference   mDatabase = FirebaseDatabase.getInstance().getReference();;
-    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public interface UserDataCallback {
         void onUserDataReceived(User userData);
@@ -74,7 +73,6 @@ public class FirebaseHandler {
                         if (task.isSuccessful()) {
                             Toast.makeText(context, "Succesfully Signed Up!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(context, FirstTimeLogin.class);
-                            intent.putExtra("user_email", sEmail); // Pass email to FirstTimeLogin
                             context.startActivity(intent);
 
                         } else {
@@ -104,7 +102,7 @@ public class FirebaseHandler {
 
     public static void updateWeight( int newWeight) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        assert user != null;
+        assert user != null; // פעולת תנאי שלפיה אם המשתמש הינו null האפליקציה קורסת
         String userId = user.getUid();
         mDatabase.child("users").child(userId).child("weight").setValue(newWeight)
                 .addOnSuccessListener(aVoid ->
@@ -112,6 +110,7 @@ public class FirebaseHandler {
                 .addOnFailureListener(e ->
                         Toast.makeText(context, "Failed to update weight: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
+
     public static void updateHeight(int height) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         assert user != null;
@@ -123,24 +122,28 @@ public class FirebaseHandler {
                 .addOnFailureListener(e ->
                         Toast.makeText(context, "Failed to update height: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
+
     public void updateWorkoutFrequency() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         assert user != null;
         String userId = user.getUid();
+        databaseReference = FirebaseDatabase.getInstance().getReference("TrainingPlans");
         DatabaseReference userWorkoutsRef = databaseReference.child(userId);
 
-        userWorkoutsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        userWorkoutsRef.addListenerForSingleValueEvent(new ValueEventListener() { //One time Check on userworkoutsRef Firebase.
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     int workoutCount = 0;
                     for (DataSnapshot child : snapshot.getChildren()) {
-                        // You can refine this condition if needed (e.g., only count non-empty workouts)
-                        if (child.getValue() != null && !child.getValue().toString().trim().isEmpty()) {
+                        String workoutValue = child.getValue(String.class);
+                        // Only count if it's not null, not empty, and not a "Rest Day"
+                        if (workoutValue != null &&
+                                !workoutValue.trim().isEmpty() &&
+                                !workoutValue.trim().equals("Rest Day")) {
                             workoutCount++;
                         }
                     }
-
                     // Now update the user's profile with the workout count
                     DatabaseReference userRef = FirebaseDatabase.getInstance()
                             .getReference("users")
@@ -167,56 +170,6 @@ public class FirebaseHandler {
         });
     }
 
-    public static void getData(String userId, final Context context) {
-        DatabaseReference userRef = mDatabase.child("users").child(userId);
-
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    // Convert the snapshot into a User object
-                    User user = snapshot.getValue(User.class);
-                    if (user != null) {
-                        int weight = user.weight;
-                        int height = user.height;
-                        double heightInMeters = height / 100.0;
-                        double bmi = weight / (heightInMeters * heightInMeters);
-
-                        String tip;
-                        if (bmi < 18.5) {
-                            tip = "You might consider bulking up.";
-                        } else if (bmi < 25) {
-                            tip = "You're at a healthy weight.";
-                        } else {
-                            tip = "You might consider losing some weight.";
-                        }
-
-                        String message = "Weight: " + weight +
-                                "\nHeight: " + height +
-                                "\nBMI: " + String.format("%.2f", bmi) +
-                                "\nTip: " + tip;
-
-                        new AlertDialog.Builder(context)
-                                .setTitle("User Data")
-                                .setMessage(message)
-                                .setPositiveButton("OK", null)
-                                .show();
-                    } else {
-                        Toast.makeText(context, "User data is null.", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(context, "User not found.", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-
-        });
-    }
-
 
     public void saveTrainingPlan(String userId, Map<String, String> workoutData) {
         databaseReference.child(userId).setValue(workoutData)
@@ -238,7 +191,6 @@ public class FirebaseHandler {
                     Map<String, String> workouts = new HashMap<>();
                     for (DataSnapshot child : snapshot.getChildren()) {
                         workouts.put(child.getKey(), child.getValue(String.class));
-                        if(child.getValue(String.class) != null) {count ++;}
                     }
                     callback.onDataReceived(workouts);
                 } else {
