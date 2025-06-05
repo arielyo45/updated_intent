@@ -11,7 +11,9 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,16 +30,27 @@ import java.util.Map;
 public class FirebaseHandler {
     private DatabaseReference databaseReference;
     private static FirebaseAuth auth;
-    private int count =0;
+    private int count = 0;
     private static Context context;
-    private static final DatabaseReference   mDatabase = FirebaseDatabase.getInstance().getReference();;
+    private static final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
     public interface UserDataCallback {
         void onUserDataReceived(User userData);
+        void onError(String error);
     }
 
-    public FirebaseHandler(FirebaseAuth auth,Context context )  {
-        FirebaseHandler.auth =auth;
+    public interface AuthCallback {
+        void onSuccess(String message);
+        void onFailure(String error);
+    }
+
+    public interface EmailUpdateCallback {
+        void onSuccess(String newEmail);
+        void onFailure(String error);
+    }
+
+    public FirebaseHandler(FirebaseAuth auth, Context context) {
+        FirebaseHandler.auth = auth;
         FirebaseHandler.context = context;
     }
 
@@ -45,7 +58,7 @@ public class FirebaseHandler {
         databaseReference = FirebaseDatabase.getInstance().getReference("TrainingPlans");
     }
 
-    public void SignIn(String sEmail, String sPassword){
+    public void SignIn(String sEmail, String sPassword) {
         if (sEmail.isEmpty() || sPassword.isEmpty()) {
             Toast.makeText(context, "type in the mail and password", Toast.LENGTH_SHORT).show();
         } else {
@@ -100,9 +113,9 @@ public class FirebaseHandler {
                 .addOnFailureListener(e -> Toast.makeText(context, "Failed to save data: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    public static void updateWeight( int newWeight) {
+    public static void updateWeight(int newWeight) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        assert user != null; // פעולת תנאי שלפיה אם המשתמש הינו null האפליקציה קורסת
+        assert user != null;
         String userId = user.getUid();
         mDatabase.child("users").child(userId).child("weight").setValue(newWeight)
                 .addOnSuccessListener(aVoid ->
@@ -118,9 +131,128 @@ public class FirebaseHandler {
         mDatabase.child("users").child(userId).child("height").setValue(height)
                 .addOnSuccessListener(aVoid ->
                         Toast.makeText(context, "Height updated successfully!", Toast.LENGTH_SHORT).show())
-
                 .addOnFailureListener(e ->
                         Toast.makeText(context, "Failed to update height: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    // New method to update username
+    public static void updateUsername(String username, AuthCallback callback) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            callback.onFailure("User not authenticated");
+            return;
+        }
+
+        String userId = user.getUid();
+        mDatabase.child("users").child(userId).child("username").setValue(username)
+                .addOnSuccessListener(aVoid -> {
+                    callback.onSuccess("Username updated successfully!");
+                })
+                .addOnFailureListener(e -> {
+                    callback.onFailure("Failed to update username: " + e.getMessage());
+                });
+    }
+
+    // New method to load user data
+    public static void loadUserData(UserDataCallback callback) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            callback.onError("User not authenticated");
+            return;
+        }
+
+        String userId = user.getUid();
+        DatabaseReference userRef = mDatabase.child("users").child(userId);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    User userData = snapshot.getValue(User.class);
+                    if (userData != null) {
+                        callback.onUserDataReceived(userData);
+                    } else {
+                        callback.onError("Failed to parse user data");
+                    }
+                } else {
+                    callback.onError("User data not found");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.onError("Database error: " + error.getMessage());
+            }
+        });
+    }
+
+    // New method to change email
+    public static void changeEmail(String currentPassword, String newEmail, EmailUpdateCallback callback) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            callback.onFailure("User not authenticated");
+            return;
+        }
+
+        // Re-authenticate user
+        AuthCredential credential = EmailAuthProvider.getCredential(currentUser.getEmail(), currentPassword);
+
+        currentUser.reauthenticate(credential).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // Update email
+                currentUser.updateEmail(newEmail).addOnCompleteListener(updateTask -> {
+                    if (updateTask.isSuccessful()) {
+                        callback.onSuccess(newEmail);
+                    } else {
+                        String errorMessage = updateTask.getException() != null ?
+                                updateTask.getException().getMessage() : "Unknown error";
+                        callback.onFailure("Failed to update email: " + errorMessage);
+                    }
+                });
+            } else {
+                callback.onFailure("Authentication failed. Check your current password.");
+            }
+        });
+    }
+
+    // New method to change password
+    public static void changePassword(String currentPassword, String newPassword, AuthCallback callback) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            callback.onFailure("User not authenticated");
+            return;
+        }
+
+        // Re-authenticate user
+        AuthCredential credential = EmailAuthProvider.getCredential(currentUser.getEmail(), currentPassword);
+
+        currentUser.reauthenticate(credential).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // Update password
+                currentUser.updatePassword(newPassword).addOnCompleteListener(updateTask -> {
+                    if (updateTask.isSuccessful()) {
+                        callback.onSuccess("Password updated successfully!");
+                    } else {
+                        String errorMessage = updateTask.getException() != null ?
+                                updateTask.getException().getMessage() : "Unknown error";
+                        callback.onFailure("Failed to update password: " + errorMessage);
+                    }
+                });
+            } else {
+                callback.onFailure("Authentication failed. Check your current password.");
+            }
+        });
+    }
+
+    // New method to sign out
+    public static void signOut() {
+        FirebaseAuth.getInstance().signOut();
+    }
+
+    // New method to get current user email
+    public static String getCurrentUserEmail() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        return user != null ? user.getEmail() : null;
     }
 
     public void updateWorkoutFrequency() {
@@ -130,21 +262,19 @@ public class FirebaseHandler {
         databaseReference = FirebaseDatabase.getInstance().getReference("TrainingPlans");
         DatabaseReference userWorkoutsRef = databaseReference.child(userId);
 
-        userWorkoutsRef.addListenerForSingleValueEvent(new ValueEventListener() { //One time Check on userworkoutsRef Firebase.
+        userWorkoutsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     int workoutCount = 0;
                     for (DataSnapshot child : snapshot.getChildren()) {
                         String workoutValue = child.getValue(String.class);
-                        // Only count if it's not null, not empty, and not a "Rest Day"
                         if (workoutValue != null &&
                                 !workoutValue.trim().isEmpty() &&
                                 !workoutValue.trim().equals("Rest Day")) {
                             workoutCount++;
                         }
                     }
-                    // Now update the user's profile with the workout count
                     DatabaseReference userRef = FirebaseDatabase.getInstance()
                             .getReference("users")
                             .child(userId);
@@ -170,7 +300,6 @@ public class FirebaseHandler {
         });
     }
 
-
     public void saveTrainingPlan(String userId, Map<String, String> workoutData) {
         databaseReference.child(userId).setValue(workoutData)
                 .addOnSuccessListener(aVoid -> {
@@ -180,8 +309,6 @@ public class FirebaseHandler {
                     Log.e("Firebase", "Failed to save training plan for user: " + userId, e);
                 });
     }
-
-
 
     public void getTrainingPlan(String userId, FirebaseDataCallback callback) {
         databaseReference.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {

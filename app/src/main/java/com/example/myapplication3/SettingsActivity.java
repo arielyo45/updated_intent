@@ -1,7 +1,5 @@
 package com.example.myapplication3;
 
-import static com.example.myapplication3.FirebaseHandler.updateHeight;
-
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
@@ -41,23 +39,11 @@ public class SettingsActivity extends AppCompatActivity {
 
     private TextView currentEmailText, currentHeightText, currentUsernameText;
     private Button changeEmailBtn, changePasswordBtn, changeHeightBtn, signOutBtn, changeUsernameBtn;
-    private FirebaseAuth auth;
-    private FirebaseUser currentUser;
-    private DatabaseReference userRef;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_page);
-
-        // Initialize Firebase
-        auth = FirebaseAuth.getInstance();
-        currentUser = auth.getCurrentUser();
-
-        if (currentUser != null) {
-            userRef = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
-        }
 
         // Initialize views
         initViews();
@@ -81,27 +67,28 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void loadUserData() {
-        if (currentUser == null) return;
+        // Display current email using FirebaseHandler
+        String currentEmail = FirebaseHandler.getCurrentUserEmail();
+        if (currentEmail != null) {
+            currentEmailText.setText("Current Email: " + currentEmail);
+        }
 
-        // Display current email
-        currentEmailText.setText("Current Email: " + currentUser.getEmail());
-
-        // Load user data from Realtime Database
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Load user data from Firebase using FirebaseHandler
+        FirebaseHandler.loadUserData(new FirebaseHandler.UserDataCallback() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-
-                    Integer height = snapshot.child("height").getValue(Integer.class);
-                    currentHeightText.setText("Current Height: " + (height != null ? height + " cm" : "Not set"));
-                    String username = snapshot.child("username").getValue(String.class);
-                    currentUsernameText.setText("Current Username: " + (username != null ? username : "Not set"));
-                }
+            public void onUserDataReceived(FirebaseHandler.User userData) {
+                runOnUiThread(() -> {
+                    currentHeightText.setText("Current Height: " + userData.height + " cm");
+                    currentUsernameText.setText("Current Username: " +
+                            (userData.username != null ? userData.username : "Not set"));
+                });
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(SettingsActivity.this, "Error loading user data", Toast.LENGTH_SHORT).show();
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(SettingsActivity.this, "Error loading user data: " + error, Toast.LENGTH_SHORT).show();
+                });
             }
         });
     }
@@ -112,7 +99,6 @@ public class SettingsActivity extends AppCompatActivity {
         changeHeightBtn.setOnClickListener(v -> showChangeHeightDialog());
         signOutBtn.setOnClickListener(v -> signOut());
         changeUsernameBtn.setOnClickListener(v -> showChangeUsernameDialog());
-
     }
 
     private void showChangeEmailDialog() {
@@ -144,35 +130,29 @@ public class SettingsActivity extends AppCompatActivity {
                 return;
             }
 
-            changeEmail(currentPassword, newEmail);
+            // Use FirebaseHandler to change email
+            FirebaseHandler.changeEmail(currentPassword, newEmail, new FirebaseHandler.EmailUpdateCallback() {
+                @Override
+                public void onSuccess(String newEmail) {
+                    runOnUiThread(() -> {
+                        currentEmailText.setText("Current Email: " + newEmail);
+                        Toast.makeText(SettingsActivity.this, "Email updated successfully!", Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(SettingsActivity.this, error, Toast.LENGTH_LONG).show();
+                    });
+                }
+            });
         });
 
         builder.setNegativeButton("Cancel", null);
         builder.show();
     }
 
-    private void changeEmail(String currentPassword, String newEmail) {
-        if (currentUser == null) return;
-
-        // Re-authenticate user
-        AuthCredential credential = EmailAuthProvider.getCredential(currentUser.getEmail(), currentPassword);
-
-        currentUser.reauthenticate(credential).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                // Update email
-                currentUser.updateEmail(newEmail).addOnCompleteListener(updateTask -> {
-                    if (updateTask.isSuccessful()) {
-                        currentEmailText.setText("Current Email: " + newEmail);
-                        Toast.makeText(this, "Email updated successfully!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, "Failed to update email: " + updateTask.getException().getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            } else {
-                Toast.makeText(this, "Authentication failed. Check your current password.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
     private void showChangeUsernameDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Change Username");
@@ -196,24 +176,29 @@ public class SettingsActivity extends AppCompatActivity {
                 return;
             }
 
-            updateUsername(newUsername);
+            // Use FirebaseHandler to update username
+            FirebaseHandler.updateUsername(newUsername, new FirebaseHandler.AuthCallback() {
+                @Override
+                public void onSuccess(String message) {
+                    runOnUiThread(() -> {
+                        currentUsernameText.setText("Current Username: " + newUsername);
+                        Toast.makeText(SettingsActivity.this, message, Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(SettingsActivity.this, error, Toast.LENGTH_SHORT).show();
+                    });
+                }
+            });
         });
 
         builder.setNegativeButton("Cancel", null);
         builder.show();
     }
 
-    private void updateUsername(String username) {
-        if (userRef == null) return;
-
-        userRef.child("username").setValue(username)
-                .addOnSuccessListener(aVoid -> {
-                    currentUsernameText.setText("Current Username: " + username);
-                    Toast.makeText(this, "Username updated successfully!", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Failed to update username: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-    }
     private void showChangePasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Change Password");
@@ -259,33 +244,26 @@ public class SettingsActivity extends AppCompatActivity {
                 return;
             }
 
-            changePassword(currentPassword, newPassword);
+            // Use FirebaseHandler to change password
+            FirebaseHandler.changePassword(currentPassword, newPassword, new FirebaseHandler.AuthCallback() {
+                @Override
+                public void onSuccess(String message) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(SettingsActivity.this, message, Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(SettingsActivity.this, error, Toast.LENGTH_LONG).show();
+                    });
+                }
+            });
         });
 
         builder.setNegativeButton("Cancel", null);
         builder.show();
-    }
-
-    private void changePassword(String currentPassword, String newPassword) {
-        if (currentUser == null) return;
-
-        // Re-authenticate user
-        AuthCredential credential = EmailAuthProvider.getCredential(currentUser.getEmail(), currentPassword);
-
-        currentUser.reauthenticate(credential).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                // Update password
-                currentUser.updatePassword(newPassword).addOnCompleteListener(updateTask -> {
-                    if (updateTask.isSuccessful()) {
-                        Toast.makeText(this, "Password updated successfully!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, "Failed to update password: " + updateTask.getException().getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            } else {
-                Toast.makeText(this, "Authentication failed. Check your current password.", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void showChangeHeightDialog() {
@@ -312,7 +290,8 @@ public class SettingsActivity extends AppCompatActivity {
                     Toast.makeText(this, "Please enter a valid height (100-250 cm)", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                updateHeight(height);
+                // Use FirebaseHandler to update height
+                FirebaseHandler.updateHeight(height);
                 currentHeightText.setText("Current Height: " + height + " cm");
 
             } catch (NumberFormatException e) {
@@ -324,14 +303,14 @@ public class SettingsActivity extends AppCompatActivity {
         builder.show();
     }
 
-
     private void signOut() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Sign Out");
         builder.setMessage("Are you sure you want to sign out?");
 
         builder.setPositiveButton("Yes", (dialog, which) -> {
-            auth.signOut();
+            // Use FirebaseHandler to sign out
+            FirebaseHandler.signOut();
             Toast.makeText(this, "Signed out successfully", Toast.LENGTH_SHORT).show();
             finish();
         });

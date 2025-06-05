@@ -33,15 +33,13 @@ public class FoodTrack extends AppCompatActivity {
     private FoodApiService apiService;
 
     // List to store food entries for the day
-    private List<FoodEntry> foodEntries = new ArrayList<>();
+    private List<FoodItem> foodItems = new ArrayList<>();
     private float totalCalories = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_track);
-
-        // Initialize UI components
         resultTextView = findViewById(R.id.resultTextView);
         foodInputEditText = findViewById(R.id.foodInputEditText);
         addFoodButton = findViewById(R.id.addFoodButton);
@@ -55,8 +53,6 @@ public class FoodTrack extends AppCompatActivity {
                 .build();
 
         apiService = retrofit.create(FoodApiService.class);
-
-        // Set up add food button click listener
         addFoodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,8 +64,6 @@ public class FoodTrack extends AppCompatActivity {
                 }
             }
         });
-
-        // Initialize total calories display
         updateTotalCalories();
     }
 
@@ -106,16 +100,9 @@ public class FoodTrack extends AppCompatActivity {
 
     private void addFoodEntry(FoodItem food) {
         // Create a new food entry
-        FoodEntry entry = new FoodEntry(
-                food.foodName,
-                food.calories,
-                food.carbs,
-                food.protein,
-                food.totalFat
-        );
 
         // Add to our list
-        foodEntries.add(entry);
+        foodItems.add(food);
 
         // Add to the table
         TableRow row = new TableRow(this);
@@ -139,7 +126,7 @@ public class FoodTrack extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Remove from entries list
-                foodEntries.remove(entry);
+                foodItems.remove(food);
                 // Remove from table
                 foodTableLayout.removeView(row);
                 // Update total
@@ -157,26 +144,9 @@ public class FoodTrack extends AppCompatActivity {
 
     private void updateTotalCalories() {
         totalCalories = 0;
-        for (FoodEntry entry : foodEntries) {
+        for (FoodItem entry : foodItems) {
             totalCalories += entry.calories;
         }
         totalCaloriesTextView.setText(String.format("Total Calories: %.0f", totalCalories));
-    }
-
-    // Helper class to store food entries
-    private static class FoodEntry {
-        String name;
-        float calories;
-        float carbs;
-        float protein;
-        float fat;
-
-        FoodEntry(String name, float calories, float carbs, float protein, float fat) {
-            this.name = name;
-            this.calories = calories;
-            this.carbs = carbs;
-            this.protein = protein;
-            this.fat = fat;
-        }
     }
 }
