@@ -428,7 +428,7 @@ public class TrainingPlan extends AppCompatActivity {
             String day = entry.getKey();
             String workout = entry.getValue().trim();
 
-            if (workout.isEmpty() || workout.equals("Rest Day")) {
+            if (workout.equals("Rest Day")) {
                 restDays++;
                 prompt.append(day).append(": Rest day\n");
             } else {
