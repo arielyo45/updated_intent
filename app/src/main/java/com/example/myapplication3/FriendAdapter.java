@@ -27,9 +27,9 @@ public class FriendAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private DatabaseReference usersRef;
 
-    public FriendAdapter(Context context, List<Friend> buddies) {
+    public FriendAdapter(Context context, List<Friend> friends) {
         this.context = context;
-        this.Friends = buddies;
+        this.Friends = friends;
         this.inflater = LayoutInflater.from(context);
         this.usersRef = FirebaseDatabase.getInstance().getReference("users");
     }
@@ -50,17 +50,17 @@ public class FriendAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) { // פעולה שנקראית אוטומטית כלפי כל הViews במסך כאשר יש שימוש בListView (ייצוג של רשימת איברים)
         ViewHolder holder;
 
-        if (convertView == null) {
+        if (convertView == null) { // כאשר אין תצוגה קיימת שניתן להשתמש בה שוב או בעת התחלה או כאשר גוללים ולא כל הViews במסך אחד
             convertView = inflater.inflate(R.layout.item_friend, parent, false);
             holder = new ViewHolder();
             holder.nameText = convertView.findViewById(R.id.buddy_name);
             holder.workoutText = convertView.findViewById(R.id.buddy_workout);
             holder.frequencyText = convertView.findViewById(R.id.buddy_frequency);
             convertView.setTag(holder);
-        } else {
+        } else { // כאשר יש Views מחוץ למסך
             holder = (ViewHolder) convertView.getTag();
         }
 
@@ -134,7 +134,7 @@ public class FriendAdapter extends BaseAdapter {
 
         builder.setPositiveButton("OK", null);
 
-        // Optional: Add a button to copy email to clipboard
+        // copy email to clipboard
         if (email != null && !email.isEmpty()) {
             builder.setNeutralButton("Copy Email", (dialog, which) -> {
                 android.content.ClipboardManager clipboard =
