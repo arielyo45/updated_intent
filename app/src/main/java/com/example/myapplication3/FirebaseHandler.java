@@ -96,21 +96,34 @@ public class FirebaseHandler {
                 });
     }
 
-    public static void saveFirstTimeUser(int height, int workouts, int weight, boolean gender, String username, String email) {
+    public static void saveFirstTimeUser(int height, int workouts, int weight, boolean gender, String username, String email,
+                                         String fitnessGoals, String fitnessLevel, String previousExperience, String physicalLimitations,
+                                         int availableDaysPerWeek, int maxWorkoutDuration, String availableEquipment,
+                                         String preferredWorkoutTypes, String dislikedWorkoutTypes, String dietaryPreferences,
+                                         String allergies, String currentDiet, int sleepHours, String stressLevel,
+                                         String motivationFactors, String previousInjuries, boolean hasChronicConditions,
+                                         String activityLevel) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         assert user != null;
         String userId = user.getUid();
 
-        User account = new User(weight, height, workouts, gender, username, email);
+        User account = new User(weight, height, workouts, gender, username, email,
+                fitnessGoals, fitnessLevel, previousExperience, physicalLimitations,
+                availableDaysPerWeek, maxWorkoutDuration, availableEquipment,
+                preferredWorkoutTypes, dislikedWorkoutTypes, dietaryPreferences,
+                allergies, currentDiet, sleepHours, stressLevel,
+                motivationFactors, previousInjuries, hasChronicConditions,
+                activityLevel);
+
         mDatabase.child("users").child(userId).setValue(account)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(context, "Data saved successfully!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Profile created successfully!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, TheHub.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 })
-                .addOnFailureListener(e -> Toast.makeText(context, "Failed to save data: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> Toast.makeText(context, "Failed to save profile: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     public static void updateWeight(int newWeight) {
@@ -337,6 +350,7 @@ public class FirebaseHandler {
         void onError(Exception e);
     }
 
+    // Updated User class in FirebaseHandler.java
     public static class User {
         public int weight;
         public int height;
@@ -345,16 +359,61 @@ public class FirebaseHandler {
         public String username;
         public String email;
 
+        // New fields for comprehensive fitness tracking
+        public String fitnessGoals; // "lose_weight", "build_muscle", "improve_endurance", "tone_body", "general_fitness"
+        public String fitnessLevel; // "beginner", "intermediate", "advanced", "athlete"
+        public String previousExperience; // description of past workout experience
+        public String physicalLimitations; // injuries, medical conditions, chronic pain
+        public int availableDaysPerWeek; // how many days can workout
+        public int maxWorkoutDuration; // in minutes
+        public String availableEquipment; // "gym", "home_basic", "home_full", "bodyweight_only", "outdoor"
+        public String preferredWorkoutTypes; // "yoga", "pilates", "running", "weightlifting", "hiit", "swimming"
+        public String dislikedWorkoutTypes; // workouts to avoid
+        public String dietaryPreferences; // "omnivore", "vegetarian", "vegan", "keto", "paleo"
+        public String allergies; // food allergies
+        public String currentDiet; // description of current eating habits
+        public int sleepHours; // average hours of sleep
+        public String stressLevel; // "low", "moderate", "high"
+        public String motivationFactors; // what motivates the user
+        public String previousInjuries; // history of injuries
+        public boolean hasChronicConditions; // heart problems, diabetes, etc.
+        public String activityLevel; // "sedentary", "lightly_active", "moderately_active", "very_active"
+
         public User() {}
 
-        public User(int weight, int height, int workoutFrequency, boolean gender, String username, String email) {
+        public User(int weight, int height, int workoutFrequency, boolean gender, String username, String email,
+                    String fitnessGoals, String fitnessLevel, String previousExperience, String physicalLimitations,
+                    int availableDaysPerWeek, int maxWorkoutDuration, String availableEquipment,
+                    String preferredWorkoutTypes, String dislikedWorkoutTypes, String dietaryPreferences,
+                    String allergies, String currentDiet, int sleepHours, String stressLevel,
+                    String motivationFactors, String previousInjuries, boolean hasChronicConditions,
+                    String activityLevel) {
             this.weight = weight;
             this.height = height;
             this.workoutFrequency = workoutFrequency;
             this.username = username;
             this.email = email;
-            if (gender) this.gender = "Male";
-            else this.gender = "Female";
+            this.gender = gender ? "Male" : "Female";
+
+            // Set new fields
+            this.fitnessGoals = fitnessGoals;
+            this.fitnessLevel = fitnessLevel;
+            this.previousExperience = previousExperience;
+            this.physicalLimitations = physicalLimitations;
+            this.availableDaysPerWeek = availableDaysPerWeek;
+            this.maxWorkoutDuration = maxWorkoutDuration;
+            this.availableEquipment = availableEquipment;
+            this.preferredWorkoutTypes = preferredWorkoutTypes;
+            this.dislikedWorkoutTypes = dislikedWorkoutTypes;
+            this.dietaryPreferences = dietaryPreferences;
+            this.allergies = allergies;
+            this.currentDiet = currentDiet;
+            this.sleepHours = sleepHours;
+            this.stressLevel = stressLevel;
+            this.motivationFactors = motivationFactors;
+            this.previousInjuries = previousInjuries;
+            this.hasChronicConditions = hasChronicConditions;
+            this.activityLevel = activityLevel;
         }
     }
 }
