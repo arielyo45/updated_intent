@@ -1,154 +1,339 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center_horizontal"
     tools:context=".FirstTimeLogin">
-
-    <EditText
-        android:id="@+id/editTextUsername"
-        android:layout_width="255dp"
-        android:layout_height="77dp"
-        android:autofillHints=""
-        android:ems="10"
-        android:hint="enter your Username"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.525"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.198" />
 
     <TextView
         android:id="@+id/textView3"
-        android:layout_width="328dp"
-        android:layout_height="104dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:text="Welcome, to the first time login enter your details"
         android:textSize="25sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.025" />
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your Username"
+        android:inputType="text"
+        android:layout_marginBottom="16dp"/>
 
     <EditText
         android:id="@+id/editTextText3"
-        android:layout_width="255dp"
-        android:layout_height="77dp"
-        android:autofillHints=""
-        android:ems="10"
-        android:hint="enter your weight"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.538"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.331" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your weight"
+        android:inputType="number"
+        android:layout_marginBottom="16dp"/>
 
     <EditText
         android:id="@+id/editTextText4"
-        android:layout_width="247dp"
-        android:layout_height="73dp"
-        android:autofillHints=""
-        android:ems="10"
-        android:hint="enter your Height"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.577" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your height"
+        android:inputType="number"
+        android:layout_marginBottom="16dp"/>
 
     <EditText
         android:id="@+id/editTextText2"
-        android:layout_width="245dp"
-        android:layout_height="86dp"
-        android:autofillHints=""
-        android:ems="10"
-        android:hint="how many times you workout a week
-"
-        android:inputType=""
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.506"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.455" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="How many times you workout a week"
+        android:inputType="number"
+        android:layout_marginBottom="16dp"/>
 
     <TextView
         android:id="@+id/textView4"
-        android:layout_width="187dp"
-        android:layout_height="33dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Choose your gender"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.674" />
-
-
-    <Button
-        android:id="@+id/button5"
-        android:layout_width="130dp"
-        android:layout_height="56dp"
-        android:onClick="onClick"
-        android:text="Button"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.933" />
+        android:layout_marginBottom="8dp"/>
 
     <RadioGroup
         android:id="@+id/shabota"
-        android:layout_width="187dp"
-        android:layout_height="115dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.836">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
 
         <RadioButton
             android:id="@+id/radio_male"
-            android:layout_width="153dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:checked="false"
             android:text="Male"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.662"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.765" />
+            android:textSize="18sp"/>
 
         <RadioButton
             android:id="@+id/radio_female"
-            android:layout_width="122dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginEnd="16dp"
             android:text="Female"
             android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/radio_male"
-            app:layout_constraintHorizontal_bias="0.765"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.765" />
+            android:layout_marginStart="32dp"/>
     </RadioGroup>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:textSize="18sp"
+        android:onClick="onClick"/>
+    <!-- Previous Experience -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Previous Exercise Experience"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/editTextPreviousExperience"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Describe your previous workout experience..."
+        android:inputType="textMultiLine"
+        android:lines="3" />
+
+    <!-- Physical Limitations -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Physical Limitations/Injuries"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/editTextPhysicalLimitations"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Any physical limitations or current injuries..."
+        android:inputType="textMultiLine"
+        android:lines="3" />
+
+    <!-- Previous Injuries -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Previous Injuries"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/editTextPreviousInjuries"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="History of injuries that might affect workouts..."
+        android:inputType="textMultiLine"
+        android:lines="3" />
+
+    <!-- Fitness Goals -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fitness Goals"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <Spinner
+        android:id="@+id/spinnerFitnessGoals"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+    <!-- Fitness Level -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Fitness Level"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <Spinner
+        android:id="@+id/spinnerFitnessLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+    <!-- Activity Level -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Daily Activity Level"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <Spinner
+        android:id="@+id/spinnerActivityLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+    <!-- Available Days -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Available Days Per Week"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/textAvailableDays"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3 days per week"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
+
+    <SeekBar
+        android:id="@+id/seekBarAvailableDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="6"
+        android:progress="2" />
+
+    <!-- Max Workout Duration -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Maximum Workout Duration"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/textMaxWorkoutDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="45 minutes"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
+
+    <SeekBar
+        android:id="@+id/seekBarMaxWorkoutDuration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="105"
+        android:progress="30" />
+
+    <!-- Dietary Preferences -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dietary Preferences"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <Spinner
+        android:id="@+id/spinnerDietaryPreferences"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+    <!-- Current Diet -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Diet Description"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/editTextCurrentDiet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Describe your current eating habits..."
+        android:inputType="textMultiLine"
+        android:lines="3" />
+
+    <!-- Allergies -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Food Allergies"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/editTextAllergies"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="List any food allergies or intolerances..."
+        android:inputType="text" />
+
+    <!-- Sleep Hours -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Average Sleep Hours"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/textSleepHours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="8 hours"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
+
+    <SeekBar
+        android:id="@+id/seekBarSleepHours"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="8"
+        android:progress="4" />
+
+    <!-- Stress Level -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Stress Level"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <Spinner
+        android:id="@+id/spinnerStressLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+    <!-- Motivation Factors -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="What Motivates You?"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/editTextMotivationFactors"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="What keeps you motivated to exercise..."
+        android:inputType="textMultiLine"
+        android:lines="3" />
+
+</LinearLayout>
